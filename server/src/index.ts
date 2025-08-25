@@ -6,6 +6,7 @@ import compression from "compression"
 import helmet from "helmet"
 import morgan from "morgan"
 import cors from "cors"
+import path from "path"
 
 import { AppDataSource } from "./data-source"
 import logger from "./utils/logger"
@@ -15,11 +16,17 @@ import authRoutes from "./routes/auth.routes"
 import taskRoutes from "./routes/task.routes"
 import tagRoutes from "./routes/tag.routes"
 
+import swaggerUi from 'swagger-ui-express'
+import swaggerJSDoc from 'swagger-jsdoc'
+import * as schemas from "./schemas"
+import { z } from 'zod'
+
 (async () => {
   // ========= Database =========
   await AppDataSource.initialize()
 
   // ========= Config =========
+  const PORT = process.env.PORT || 3000
   const app = express()
   // Helmet
   app.use(helmet())
@@ -62,9 +69,32 @@ import tagRoutes from "./routes/tag.routes"
     res.status(500).json({ error: err.message });
   });
 
+  // ========= Swagger docs =========
+  const _compiledSchemas = Object.values(schemas).map((schema) => z.toJSONSchema(schema))
+  const compiledSchemas = Object.fromEntries(_compiledSchemas.map((schema) => [schema.id, schema]))
+  const swaggerOptions = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'Taskcy API',
+        version: '1.0.0',
+        description: 'Documentation de la API de Taskcy'
+      },
+      servers: [
+        {
+          url: `http://localhost:${PORT}`
+        }
+      ],
+      components: {
+        schemas: compiledSchemas,
+      }
+    },
+    apis: [path.join(__dirname, 'routes', '*.routes.ts')]
+  };
+
+  const swaggerSpec = swaggerJSDoc(swaggerOptions);
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
   // ========= Server =========
-  const PORT = process.env.PORT || 3000
-  app.listen(PORT, () => {
-      console.log(`Server started on port ${PORT}`)
-  })
+  app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
 })()
