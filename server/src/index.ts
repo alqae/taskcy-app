@@ -65,9 +65,9 @@ import { z } from 'zod'
 
   // ========= Error handler =========
   app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
-    logger.error(err.message);
-    res.status(500).json({ error: err.message });
-  });
+    logger.error(err.message)
+    res.status(500).json({ error: err.message })
+  })
 
   // ========= Swagger docs =========
   const _compiledSchemas = Object.values(schemas).map((schema) => z.toJSONSchema(schema))
@@ -87,13 +87,20 @@ import { z } from 'zod'
       ],
       components: {
         schemas: compiledSchemas,
+        securitySchemes: {
+          BearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
       }
     },
-    apis: [path.join(__dirname, 'routes', '*.routes.ts')]
-  };
+    apis: [path.join(__dirname, "routes", "*.routes.ts")]
+  }
 
-  const swaggerSpec = swaggerJSDoc(swaggerOptions);
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  const swaggerSpec = swaggerJSDoc(swaggerOptions)
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
   // ========= Server =========
   app.listen(PORT, () => console.log(`Server started on port ${PORT}`))

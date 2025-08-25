@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Exclude } from "class-transformer"
 
 @Entity()
 export class User {
@@ -13,14 +14,17 @@ export class User {
     lastName: string
 
     @Column()
-    age: number
-
-    @Column()
     email: string
 
+    @Exclude()
     @Column("text")
     password: string
 
     @Column("int", { default: 0 })
     tokenVersion: number
+}
+
+export type UserPayload = {
+  id: number
+  tokenVersion: number
 }

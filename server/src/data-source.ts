@@ -1,6 +1,7 @@
 import "dotenv/config"
 import "reflect-metadata"
 import { DataSource } from "typeorm"
+import path from "path"
 import { User } from "./entity/User"
 import { Category } from "./entity/Category"
 import { Task } from "./entity/Task"
@@ -16,6 +17,6 @@ export const AppDataSource = new DataSource({
     synchronize: false,
     logging: false,
     entities: [User, Category, Task, Tag],
-    migrations: ["./migration/*.ts"],
+    migrations: [path.join(__dirname, "migration/*.ts")],
     subscribers: [],
 })

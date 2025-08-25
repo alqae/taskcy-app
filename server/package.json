@@ -4,6 +4,7 @@
    "description": "Awesome project developed with TypeORM.",
    "type": "commonjs",
    "devDependencies": {
+      "@types/bcrypt": "^6.0.0",
       "@types/compression": "^1.8.1",
       "@types/cookie-parser": "^1.4.9",
       "@types/cors": "^2.8.19",
@@ -22,6 +23,7 @@
    },
    "dependencies": {
       "bcrypt": "^6.0.0",
+      "class-transformer": "^0.5.1",
       "compression": "^1.8.1",
       "cookie-parser": "^1.4.7",
       "cors": "^2.8.5",
@@ -41,10 +43,10 @@
    },
    "scripts": {
       "start": "ts-node src/index.ts",
-      "typeorm": "typeorm-ts-node-commonjs",
-      "migration:run": "typeorm-ts-node-commonjs migration:run",
-      "migration:generate": "typeorm-ts-node-commonjs migration:generate",
-      "migration:show": "typeorm-ts-node-commonjs migration:show",
-      "migration:revert": "typeorm-ts-node-commonjs migration:revert"
+      "typeorm": "typeorm-ts-node-commonjs -d src/data-source.ts",
+      "migration:run": "npm run typeorm migration:run",
+      "migration:generate": "npm run typeorm migration:generate",
+      "migration:show": "npm run typeorm migration:show",
+      "migration:revert": "npm run typeorm migration:revert"
    }
 }
