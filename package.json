@@ -1,0 +1,14 @@
+{
+  "name": "taskcy-app",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"yarn workspace web dev\" \"yarn workspace server start\""
+  },
+  "workspaces": [
+    "web",
+    "server"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
