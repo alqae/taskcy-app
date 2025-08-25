@@ -15,4 +15,12 @@ export class User {
     @Column()
     age: number
 
+    @Column()
+    email: string
+
+    @Column("text")
+    password: string
+
+    @Column("int", { default: 0 })
+    tokenVersion: number
 }

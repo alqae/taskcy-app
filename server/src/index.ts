@@ -10,6 +10,11 @@ import cors from "cors"
 import { AppDataSource } from "./data-source"
 import logger from "./utils/logger"
 
+import categoryRoutes from "./routes/category.routes"
+import authRoutes from "./routes/auth.routes"
+import taskRoutes from "./routes/task.routes"
+import tagRoutes from "./routes/tag.routes"
+
 (async () => {
   // ========= Database =========
   await AppDataSource.initialize()
@@ -40,6 +45,12 @@ import logger from "./utils/logger"
   }));
   // Compression
   app.use(compression())
+
+  // ========= Routes =========
+  app.use("/auth", authRoutes)
+  app.use("/tasks", taskRoutes)
+  app.use("/categories", categoryRoutes)
+  app.use("/tags", tagRoutes)
 
   app.get("/", (req, res) => {
     res.send("All works!")
