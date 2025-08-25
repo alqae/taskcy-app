@@ -1,0 +1,49 @@
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: taskcy-fe
+    image: taskcy-fe
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - taskcy_app_proxy
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: taskcy-be
+    image: taskcy-be
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - taskcy_app_be
+      - taskcy_app_proxy
+
+  db:
+    image: postgres:15
+    container_name: taskcy-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - taskcy_app_be
+
+volumes:
+  db_data:
+
+networks:
+  taskcy_app_be:
+    driver: bridge
+  taskcy_app_proxy:
+    external: true
