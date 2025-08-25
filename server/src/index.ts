@@ -1,20 +1,59 @@
+import "dotenv/config"
+import express, { Request, Response, NextFunction } from "express"
+import expressRateLimit from "express-rate-limit"
+import cookieParser from "cookie-parser"
+import compression from "compression"
+import helmet from "helmet"
+import morgan from "morgan"
+import cors from "cors"
+
 import { AppDataSource } from "./data-source"
-import { User } from "./entity/User"
+import logger from "./utils/logger"
 
-AppDataSource.initialize().then(async () => {
+(async () => {
+  // ========= Database =========
+  await AppDataSource.initialize()
 
-    console.log("Inserting a new user into the database...")
-    const user = new User()
-    user.firstName = "Timber"
-    user.lastName = "Saw"
-    user.age = 25
-    await AppDataSource.manager.save(user)
-    console.log("Saved a new user with id: " + user.id)
+  // ========= Config =========
+  const app = express()
+  // Helmet
+  app.use(helmet())
+  // Cookies
+  app.use(cookieParser())
+  // CORS
+  app.use(cors({
+      credentials: true,
+      origin: "http://localhost:5173"
+  }))
+  // Body parser
+  app.use(express.json({ limit: "10kb" }));
+  // Rate limiter
+  app.use(expressRateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100 // limit each IP to 100 requests per windowMs
+  }))
+  // Morgan
+  app.use(morgan("combined", {
+    stream: {
+      write: (message) => logger.info(message.trim()),
+    }
+  }));
+  // Compression
+  app.use(compression())
 
-    console.log("Loading users from the database...")
-    const users = await AppDataSource.manager.find(User)
-    console.log("Loaded users: ", users)
+  app.get("/", (req, res) => {
+    res.send("All works!")
+  })
 
-    console.log("Here you can setup and run express / fastify / any other framework.")
+  // ========= Error handler =========
+  app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
+    logger.error(err.message);
+    res.status(500).json({ error: err.message });
+  });
 
-}).catch(error => console.log(error))
+  // ========= Server =========
+  const PORT = process.env.PORT || 3000
+  app.listen(PORT, () => {
+      console.log(`Server started on port ${PORT}`)
+  })
+})()
