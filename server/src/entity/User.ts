@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
 import { Exclude } from "class-transformer"
+
+import { Category } from "./Category"
 
 @Entity()
 export class User {
@@ -22,6 +24,9 @@ export class User {
 
     @Column("int", { default: 0 })
     tokenVersion: number
+
+    @OneToMany(() => Category, (category) => category.user)
+    categories: Category[]
 }
 
 export type UserPayload = {
