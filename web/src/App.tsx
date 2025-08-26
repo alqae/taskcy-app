@@ -2,10 +2,10 @@ import { createTheme } from '@mui/material/styles'
 import { ThemeProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'
 
-import RalewayMediumWoff2 from './assets/fonts/Raleway-Medium.woff2'
-import RalewayRegWoff2 from './assets/fonts/Raleway-Regular.woff2'
-import RalewayBoldWoff2 from './assets/fonts/Raleway-Bold.woff2'
-import RalewayThinWoff2 from './assets/fonts/Raleway-Thin.woff2'
+import RalewayMediumWoff2 from '@fonts/Raleway-Medium.woff2'
+import RalewayRegWoff2 from '@fonts/Raleway-Regular.woff2'
+import RalewayBoldWoff2 from '@fonts/Raleway-Bold.woff2'
+import RalewayThinWoff2 from '@fonts/Raleway-Thin.woff2'
 
 import { Router } from './Router'
 
