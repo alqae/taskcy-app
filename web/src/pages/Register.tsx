@@ -32,7 +32,7 @@ const schema = yup.object().shape({
     .required('Password is required'),
 })
 
-export const RegisterPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
   const { register, isLoading } = useAuth()
 
   const form = useForm({
@@ -159,3 +159,5 @@ export const RegisterPage: React.FC = () => {
     </ErrorBoundary>
   )
 }
+
+export default RegisterPage

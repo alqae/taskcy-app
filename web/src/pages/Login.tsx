@@ -29,7 +29,7 @@ const schema = yup.object().shape({
   remember: yup.boolean(),
 })
 
-export const LoginPage: React.FC = () => {
+const LoginPage: React.FC = () => {
   const { login, isLoading } = useAuth()
 
   const form = useForm({
@@ -135,3 +135,5 @@ export const LoginPage: React.FC = () => {
     </ErrorBoundary>
   )
 }
+
+export default LoginPage

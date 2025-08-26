@@ -4,7 +4,7 @@ import React from 'react'
 
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
 
-export const DashboardPage: React.FC = () => {
+const DashboardPage: React.FC = () => {
   return (
     <ErrorBoundary>
       <Helmet>
@@ -43,3 +43,5 @@ export const DashboardPage: React.FC = () => {
     </ErrorBoundary>
   )
 }
+
+export default DashboardPage

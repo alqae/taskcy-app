@@ -5,7 +5,7 @@ import React from 'react'
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
 import { useAuth } from '@/context/AuthContext'
 
-export const ProfilePage: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const { user, isLoggedIn, logout } = useAuth()
 
   return (
@@ -21,3 +21,5 @@ export const ProfilePage: React.FC = () => {
     </ErrorBoundary>
   )
 }
+
+export default ProfilePage

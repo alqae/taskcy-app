@@ -15,3 +15,5 @@ export const NotFoundPage: React.FC = () => {
     </ErrorBoundary>
   )
 }
+
+export default NotFoundPage

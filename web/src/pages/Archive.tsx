@@ -3,7 +3,7 @@ import React from 'react'
 
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
 
-export const ArchivePage: React.FC = () => {
+const ArchivePage: React.FC = () => {
   return (
     <ErrorBoundary>
       <Helmet>
@@ -15,3 +15,5 @@ export const ArchivePage: React.FC = () => {
     </ErrorBoundary>
   )
 }
+
+export default ArchivePage

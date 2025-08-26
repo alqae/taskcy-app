@@ -3,7 +3,7 @@ import React from 'react'
 
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
 
-export const NotificationsPage: React.FC = () => {
+const NotificationsPage: React.FC = () => {
   return (
     <ErrorBoundary>
       <Helmet>
@@ -15,3 +15,5 @@ export const NotificationsPage: React.FC = () => {
     </ErrorBoundary>
   )
 }
+
+export default NotificationsPage
