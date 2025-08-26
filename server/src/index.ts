@@ -40,7 +40,8 @@ import { z } from "zod"
   // CORS
   app.use(cors({
     credentials: true,
-    origin: "http://localhost:5173"
+    origin: "http://localhost:5173",
+    exposedHeaders: ["Authorization"],
   }))
   // Body parser
   app.use(express.json({ limit: "10kb" }))

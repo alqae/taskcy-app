@@ -9,7 +9,6 @@ export const LoginSchema = z.object({
 export const RegisterSchema = z.object({
   firstName: z.string().meta({ description: "User first name" }),
   lastName: z.string().meta({ description: "User last name" }),
-  age: z.number().int().meta({ description: "User age" }),
   email: z.email().meta({ description: "User email" }),
   password: z.string().min(6).meta({ description: "User password" }),
 }).meta({ id: "Register", description: "Register schema" })

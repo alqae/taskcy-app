@@ -7,6 +7,7 @@ import RalewayRegWoff2 from '@fonts/Raleway-Regular.woff2'
 import RalewayBoldWoff2 from '@fonts/Raleway-Bold.woff2'
 import RalewayThinWoff2 from '@fonts/Raleway-Thin.woff2'
 
+import { AuthProvider } from './context/AuthContext'
 import { Router } from './Router'
 
 const getDesignTokens = (mode: "light" | "dark") => ({
@@ -99,8 +100,10 @@ const theme = createTheme({
 export const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router />
+      <CssBaseline enableColorScheme />
+      <AuthProvider>
+        <Router />
+      </AuthProvider>
     </ThemeProvider>
   )
 }

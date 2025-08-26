@@ -3,8 +3,11 @@ import { Button } from '@mui/material'
 import React from 'react'
 
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
+import { useAuth } from '@/context/AuthContext'
 
 export const DashboardPage: React.FC = () => {
+  const { logout } = useAuth()
+
   return (
     <ErrorBoundary>
       <Helmet>
@@ -13,7 +16,7 @@ export const DashboardPage: React.FC = () => {
       </Helmet>
 
       <h1>Welcome!</h1>
-      <Button variant="contained" color="error" onClick={() => alert('Implement me!')}>Logout</Button>
+      <Button variant="contained" color="error" onClick={logout}>Logout</Button>
     </ErrorBoundary>
   )
 }

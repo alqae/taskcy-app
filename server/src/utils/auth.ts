@@ -34,8 +34,12 @@ export const createRefreshToken = (user: User) => {
 }
 
 export const sendRefreshToken = (res: Response, token: string) => {
+  const isDevelopment = process.env.NODE_ENV === "development"
   res.cookie("jid", token, {
     httpOnly: true,
-    path: "/refresh_token"
+    secure: !isDevelopment,
+    sameSite: isDevelopment ? 'lax' : 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/'
   })
 }

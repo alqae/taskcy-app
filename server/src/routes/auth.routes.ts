@@ -103,7 +103,11 @@ router.get("/profile", authMiddleware, AuthController.getProfile)
  *     summary: Refresh token
  *     responses:
  *       200:
- *         description: Return new access and refresh tokens
+ *         description: Return updated user profile and tokens
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found
  *         content:
