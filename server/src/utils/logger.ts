@@ -1,7 +1,7 @@
-import { createLogger, format, transports } from "winston";
-import path from "path";
+import { createLogger, format, transports } from "winston"
+import path from "path"
 
-const logDir = path.join(__dirname, "..", "..", "logs");
+const logDir = path.join(__dirname, "..", "..", "logs")
 
 const logger = createLogger({
   level: "info",
@@ -16,7 +16,7 @@ const logger = createLogger({
     new transports.File({ filename: path.join(logDir, "error.log"), level: "error" }),
     new transports.File({ filename: path.join(logDir, "combined.log") }),
   ],
-});
+})
 
 if (process.env.NODE_ENV !== "production") {
   logger.add(new transports.Console({
@@ -24,7 +24,7 @@ if (process.env.NODE_ENV !== "production") {
       format.colorize(),
       format.simple()
     ),
-  }));
+  }))
 }
 
-export default logger;
+export default logger

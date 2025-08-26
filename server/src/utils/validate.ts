@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express'
-import { ZodType, ZodError } from 'zod'
+import { Request, Response, NextFunction } from "express"
+import { ZodType, ZodError } from "zod"
 
 export const validate = <T>(schema: ZodType<T>) => (
   req: Request,
@@ -12,11 +12,11 @@ export const validate = <T>(schema: ZodType<T>) => (
   } catch (err) {
     if (err instanceof ZodError) {
       const errors = JSON.parse(err.message)
-      return res.status(400).json({ message: 'Validation error', errors })
+      return res.status(400).json({ message: "Validation error", errors })
     }
 
     return res.status(400).json({
-      message: 'Validation error',
+      message: "Validation error",
       errors: err instanceof Error ? err.message : undefined,
     })
   }

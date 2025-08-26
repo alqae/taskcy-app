@@ -48,7 +48,7 @@ router.post("/login", validate(LoginSchema), AuthController.login)
  *           schema:
  *             $ref: '#/components/schemas/Register'
  *     responses:
- *       200:
+ *       201:
  *         description: Register successful
  *         content:
  *           application/json:

@@ -1,9 +1,11 @@
 import "dotenv/config"
 import "reflect-metadata"
+
 import { DataSource } from "typeorm"
 import path from "path"
-import { User } from "./entity/User"
+
 import { Category } from "./entity/Category"
+import { User } from "./entity/User"
 import { Task } from "./entity/Task"
 import { Tag } from "./entity/Tag"
 

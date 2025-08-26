@@ -1,4 +1,5 @@
 import "dotenv/config"
+
 import express, { Request, Response, NextFunction } from "express"
 import expressRateLimit from "express-rate-limit"
 import cookieParser from "cookie-parser"
@@ -16,10 +17,10 @@ import authRoutes from "./routes/auth.routes"
 import taskRoutes from "./routes/task.routes"
 import tagRoutes from "./routes/tag.routes"
 
-import swaggerUi from 'swagger-ui-express'
-import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUi from "swagger-ui-express"
+import swaggerJSDoc from "swagger-jsdoc"
 import * as schemas from "./schemas"
-import { z } from 'zod'
+import { z } from "zod"
 
 (async () => {
   // ========= Database =========
@@ -38,7 +39,7 @@ import { z } from 'zod'
       origin: "http://localhost:5173"
   }))
   // Body parser
-  app.use(express.json({ limit: "10kb" }));
+  app.use(express.json({ limit: "10kb" }))
   // Rate limiter
   app.use(expressRateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
@@ -74,11 +75,11 @@ import { z } from 'zod'
   const compiledSchemas = Object.fromEntries(_compiledSchemas.map((schema) => [schema.id, schema]))
   const swaggerOptions = {
     definition: {
-      openapi: '3.0.0',
+      openapi: "3.0.0",
       info: {
-        title: 'Taskcy API',
-        version: '1.0.0',
-        description: 'Documentation de la API de Taskcy'
+        title: "Taskcy API",
+        version: "1.0.0",
+        description: "Documentation de la API de Taskcy"
       },
       servers: [
         {
@@ -89,9 +90,9 @@ import { z } from 'zod'
         schemas: compiledSchemas,
         securitySchemes: {
           BearerAuth: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT',
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
           },
         },
       }
