@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import React from 'react'
 
+import { Sidebar } from '@/components/organisms/Sidebar'
 import { useAuth } from '@/context/AuthContext'
 
 export const AuthenticatedLayout: React.FC = () => {
@@ -11,8 +12,10 @@ export const AuthenticatedLayout: React.FC = () => {
   }
 
   return (
-    <div>
-      <Outlet />
-    </div>
+    <main>
+      <Sidebar>
+        <Outlet />
+      </Sidebar>
+    </main>
   )
 }
