@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
 import { Exclude } from "class-transformer"
 
 import { Category } from "./Category"
+import { Task } from "./Task"
 import { Tag } from "./Tag"
 
 @Entity()
@@ -31,6 +32,9 @@ export class User {
 
     @OneToMany(() => Tag, (tag) => tag.user)
     tags: Tag[]
+
+    @OneToMany(() => Task, (task) => task.user)
+    tasks: Task[]
 }
 
 export type UserPayload = {

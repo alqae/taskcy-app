@@ -1,13 +1,129 @@
 import { Router } from "express"
 
 import * as TaskController from "../controllers/task.controller"
+import { CreateTaskSchema, UpdateTaskSchema } from "../schemas"
+import { validate } from "../utils/validate"
 
 const router = Router()
 
-router.get('/', TaskController.getAll)
-router.post('/', TaskController.create)
-router.put('/:id', TaskController.update)
-router.delete('/:id', TaskController.remove)
-router.patch('/:id/complete', TaskController.toggleComplete)
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tasks]
+ *     summary: Get all tasks
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/TaskWithRelation'
+ */
+router.get("/", TaskController.getAll)
+
+/**
+ * @swagger
+ * /tasks:
+ *   post:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tasks]
+ *     summary: Create a new task
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateTask'
+ *     responses:
+ *       201:
+ *         description: Task created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TaskWithRelation'
+ */
+router.post("/", validate(CreateTaskSchema), TaskController.create)
+
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   put:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tasks]
+ *     summary: Update a task
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateTask'
+ *     responses:
+ *       204:
+ *         description: Task updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TaskWithRelation'
+ *       404:
+ *         description: Task not found
+ */
+router.put("/:id", validate(UpdateTaskSchema), TaskController.update)
+
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   delete:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tasks]
+ *     summary: Delete a task
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Task deleted
+ *       404:
+ *         description: Task not found
+ */
+router.delete("/:id", TaskController.remove)
+
+/**
+ * @swagger
+ * /tasks/{id}/complete:
+ *   patch:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tasks]
+ *     summary: Complete a task
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Task completed
+ *       404:
+ *         description: Task not found
+ */
+router.patch("/:id/complete", TaskController.toggleComplete)
 
 export default router
