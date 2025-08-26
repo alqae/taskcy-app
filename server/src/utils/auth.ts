@@ -10,10 +10,10 @@ export const decodeToken = <T>(token: string, isRefreshToken: boolean): T | null
       isRefreshToken
         ? process.env.REFRESH_TOKEN_SECRET!
         : process.env.ACCESS_TOKEN_SECRET!
-    );
-    return decoded as T;
+    )
+    return decoded as T
   } catch (err) {
-    return null;
+    return null
   }
 }
 
