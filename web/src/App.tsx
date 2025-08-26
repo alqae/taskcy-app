@@ -1,35 +1,109 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createTheme } from '@mui/material/styles'
+import { ThemeProvider } from '@emotion/react'
+import { CssBaseline } from '@mui/material'
 
-function App() {
-  const [count, setCount] = useState(0)
+import RalewayMediumWoff2 from './assets/fonts/Raleway-Medium.woff2'
+import RalewayRegWoff2 from './assets/fonts/Raleway-Regular.woff2'
+import RalewayBoldWoff2 from './assets/fonts/Raleway-Bold.woff2'
+import RalewayThinWoff2 from './assets/fonts/Raleway-Thin.woff2'
 
+import { Box } from '@mui/material'
+
+const getDesignTokens = (mode: "light" | "dark") => ({
+  palette: {
+    mode,
+    primary: {
+      main: "#724C7D",
+    },
+    secondary: {
+      main: "#CFDEDB",
+    },
+    background: {
+      default: mode === "light" ? "#F5F5F5" : "#212121",
+      paper: mode === "light" ? "#FFFFFF" : "#2C2C2C",
+    },
+    custom: {
+      cardGreen: "#CFDEDB",
+      cardGray: "#E9E9E9",
+      cardPurple: "#724C7D",
+    },
+    text: {
+      primary: mode === "light" ? "#111111" : "#FFFFFF",
+      secondary: mode === "light" ? "#555555" : "#B0B0B0",
+    },
+  },
+})
+
+const theme = createTheme({
+  colorSchemes: {
+    dark: true,
+    light: true,
+  },
+  ...getDesignTokens('light'),
+  defaultColorScheme: 'light',
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+  typography: {
+    fontFamily: 'Raleway, Arial',
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        @font-face {
+          font-family: 'Raleway';
+          font-style: normal;
+          font-display: swap;
+          font-weight: 100;
+          src: local('Raleway'), local('Raleway-Thin'), url(${RalewayThinWoff2}) format('woff2');
+          unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+        }
+
+        @font-face {
+          font-family: 'Raleway';
+          font-style: normal;
+          font-display: swap;
+          font-weight: 400;
+          src: local('Raleway'), local('Raleway-Regular'), url(${RalewayRegWoff2}) format('woff2');
+          unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+        }
+
+        @font-face {
+          font-family: 'Raleway';
+          font-style: normal;
+          font-display: swap;
+          font-weight: 500;
+          src: local('Raleway'), local('Raleway-Medium'), url(${RalewayMediumWoff2}) format('woff2');
+          unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+        }
+
+        @font-face {
+          font-family: 'Raleway';
+          font-style: normal;
+          font-display: swap;
+          font-weight: 700;
+          src: local('Raleway'), local('Raleway-Bold'), url(${RalewayBoldWoff2}) format('woff2');
+          unicodeRange: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF;
+        }
+      `,
+    },
+  },
+})
+
+export const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ fontWeight: 700 }}>Bold</Box>
+      <Box sx={{ fontWeight: 500 }}>Medium</Box>
+      <Box sx={{ fontWeight: 400 }}>Regular</Box>
+      <Box sx={{ fontWeight: 100 }}>Thin</Box>
+    </ThemeProvider>
   )
 }
-
-export default App
