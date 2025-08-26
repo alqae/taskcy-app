@@ -7,7 +7,7 @@ import RalewayRegWoff2 from './assets/fonts/Raleway-Regular.woff2'
 import RalewayBoldWoff2 from './assets/fonts/Raleway-Bold.woff2'
 import RalewayThinWoff2 from './assets/fonts/Raleway-Thin.woff2'
 
-import { Box } from '@mui/material'
+import { Router } from './Router'
 
 const getDesignTokens = (mode: "light" | "dark") => ({
   palette: {
@@ -100,10 +100,7 @@ export const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ fontWeight: 700 }}>Bold</Box>
-      <Box sx={{ fontWeight: 500 }}>Medium</Box>
-      <Box sx={{ fontWeight: 400 }}>Regular</Box>
-      <Box sx={{ fontWeight: 100 }}>Thin</Box>
+      <Router />
     </ThemeProvider>
   )
 }
