@@ -4,10 +4,10 @@ import "reflect-metadata"
 import { DataSource } from "typeorm"
 import path from "path"
 
-import { Category } from "./entity/Category"
-import { User } from "./entity/User"
-import { Task } from "./entity/Task"
-import { Tag } from "./entity/Tag"
+import { Category } from "./entities/Category"
+import { User } from "./entities/User"
+import { Task } from "./entities/Task"
+import { Tag } from "./entities/Tag"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -19,6 +19,6 @@ export const AppDataSource = new DataSource({
     synchronize: false,
     logging: false,
     entities: [User, Category, Task, Tag],
-    migrations: [path.join(__dirname, "migration/*.ts")],
+    migrations: [path.join(__dirname, "migrations/*.ts")],
     subscribers: [],
 })

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express"
 
-import { UserPayload } from "../entity/User"
+import { UserPayload } from "../entities/User"
 import { decodeToken } from "../utils/auth"
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {

@@ -3,8 +3,8 @@ import z from "zod"
 
 import { CreateTagSchema } from "../schemas/tag.schema"
 import { AppDataSource } from "../data-source"
-import { User } from "../entity/User"
-import { Tag } from "../entity/Tag"
+import { User } from "../entities/User"
+import { Tag } from "../entities/Tag"
 
 export const getAll = async (_: Request, res: Response) => {
   const tags = await AppDataSource.getRepository(Tag).find()

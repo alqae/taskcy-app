@@ -1,7 +1,7 @@
 import { sign, verify } from "jsonwebtoken"
 import { Response } from "express"
 
-import { User } from "../entity/User"
+import { User } from "../entities/User"
 
 export const decodeToken = <T>(token: string, isRefreshToken: boolean): T | null => {
   try {

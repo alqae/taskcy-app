@@ -4,7 +4,7 @@ import z from "zod"
 
 import { createAccessToken, createRefreshToken, decodeToken, sendRefreshToken } from "../utils/auth"
 import { LoginSchema, RegisterSchema } from "../schemas/auth.schemas"
-import { User, UserPayload } from "../entity/User"
+import { User, UserPayload } from "../entities/User"
 import { AppDataSource } from "../data-source"
 
 export const login = async (req: Request, res: Response) => {

@@ -3,8 +3,8 @@ import z from "zod"
 
 import { CreateCategorySchema, UpdateCategorySchema } from "../schemas/category.schema"
 import { AppDataSource } from "../data-source"
-import { Category } from "../entity/Category"
-import { User } from "../entity/User"
+import { Category } from "../entities/Category"
+import { User } from "../entities/User"
 
 export const getAll = async (_: Request, res: Response) => {
   const categories = await AppDataSource.getRepository(Category).find()

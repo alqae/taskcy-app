@@ -3,11 +3,11 @@ import { In } from "typeorm"
 import z from "zod"
 
 import { CreateTaskSchema, UpdateTaskSchema } from "../schemas"
-import { Task, TaskState } from "../entity/Task"
+import { Task, TaskState } from "../entities/Task"
 import { AppDataSource } from "../data-source"
-import { Category } from "../entity/Category"
-import { User } from "../entity/User"
-import { Tag } from "../entity/Tag"
+import { Category } from "../entities/Category"
+import { User } from "../entities/User"
+import { Tag } from "../entities/Tag"
 
 export const getAll = async (req: Request, res: Response) => {
   // TODO add state, expiry_date, priority, category_id, search (name, description), tags_ids, sort_by and sort_order

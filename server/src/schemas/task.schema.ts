@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { TaskState, TaskPriority } from "../entity/Task"
+import { TaskState, TaskPriority } from "../entities/Task"
 import { CategorySchema } from "./category.schema"
 import { userSchema } from "./user.schema"
 import { TagSchema } from "./tag.schema"
