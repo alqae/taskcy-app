@@ -95,4 +95,28 @@ router.post("/logout", authMiddleware, AuthController.logout)
  */
 router.get("/profile", authMiddleware, AuthController.getProfile)
 
+/**
+ * @swagger
+ * /auth/refresh-token:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Refresh token
+ *     responses:
+ *       200:
+ *         description: Return new access and refresh tokens
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserNotFoundError'
+ *       401:
+ *         description: Token version mismatch
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TokenVersionMismatchError'
+ */
+router.post("/refresh-token", AuthController.refreshToken)
+
 export default router

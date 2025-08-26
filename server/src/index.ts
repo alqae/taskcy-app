@@ -9,6 +9,7 @@ import morgan from "morgan"
 import cors from "cors"
 import path from "path"
 
+import { transformResponse } from "./utils/transform"
 import { AppDataSource } from "./data-source"
 import logger from "./utils/logger"
 
@@ -29,28 +30,30 @@ import { z } from "zod"
   // ========= Config =========
   const PORT = process.env.PORT || 3000
   const app = express()
+  // Transform response (class-transformer)
+  app.use(transformResponse)
   // Helmet
   app.use(helmet())
   // Cookies
   app.use(cookieParser())
   // CORS
   app.use(cors({
-      credentials: true,
-      origin: "http://localhost:5173"
+    credentials: true,
+    origin: "http://localhost:5173"
   }))
   // Body parser
   app.use(express.json({ limit: "10kb" }))
   // Rate limiter
   app.use(expressRateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100 // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
   }))
   // Morgan
   app.use(morgan("combined", {
     stream: {
       write: (message) => logger.info(message.trim()),
     }
-  }));
+  }))
   // Compression
   app.use(compression())
 
@@ -60,14 +63,12 @@ import { z } from "zod"
   app.use("/categories", categoryRoutes)
   app.use("/tags", tagRoutes)
 
-  app.get("/", (req, res) => {
-    res.send("All works!")
-  })
+  app.get("/", (_, res) => res.send("All works!"))
 
   // ========= Error handler =========
   app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
     logger.error(err.message)
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ message: err.message })
   })
 
   // ========= Swagger docs =========
