@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
 import { Exclude } from "class-transformer"
 
 import { Category } from "./Category"
+import { Tag } from "./Tag"
 
 @Entity()
 export class User {
@@ -27,6 +28,9 @@ export class User {
 
     @OneToMany(() => Category, (category) => category.user)
     categories: Category[]
+
+    @OneToMany(() => Tag, (tag) => tag.user)
+    tags: Tag[]
 }
 
 export type UserPayload = {
