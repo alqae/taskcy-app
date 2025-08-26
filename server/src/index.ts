@@ -9,6 +9,7 @@ import morgan from "morgan"
 import cors from "cors"
 import path from "path"
 
+import { authMiddleware } from "./middlewares/auth.middleware"
 import { transformResponse } from "./utils/transform"
 import { AppDataSource } from "./data-source"
 import logger from "./utils/logger"
@@ -59,9 +60,9 @@ import { z } from "zod"
 
   // ========= Routes =========
   app.use("/auth", authRoutes)
-  app.use("/tasks", taskRoutes)
-  app.use("/categories", categoryRoutes)
-  app.use("/tags", tagRoutes)
+  app.use("/tasks", authMiddleware, taskRoutes)
+  app.use("/categories", authMiddleware, categoryRoutes)
+  app.use("/tags", authMiddleware, tagRoutes)
 
   app.get("/", (_, res) => res.send("All works!"))
 
