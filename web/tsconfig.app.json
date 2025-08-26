@@ -25,6 +25,7 @@
     /* Paths */
     "paths": {
       "@fonts/*": ["./src/assets/fonts/*"],
+      "@types": ["./src/types"],
       "@/*": ["./src/*"],
     },
   },

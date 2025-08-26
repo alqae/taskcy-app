@@ -11,7 +11,7 @@ import { LoginPage } from '@/pages/Login'
 
 import { AuthenticatedLayout } from '@/components/templates/AuthenticatedLayout'
 import { GuestLayout } from '@/components/templates/GuestLayout'
-import { Routes } from '@/types'
+import { Routes } from '@types'
 
 export const Router: React.FC = () => (
   <BrowserRouter>
