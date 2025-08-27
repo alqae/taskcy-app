@@ -1,5 +1,5 @@
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import React, { useState, useRef, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh'
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart'
@@ -7,18 +7,14 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import DownloadIcon from '@mui/icons-material/Download'
 import CategoryIcon from '@mui/icons-material/Category'
-import SearchIcon from '@mui/icons-material/Search'
 import TodayIcon from '@mui/icons-material/Today'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
-import InputBase from '@mui/material/InputBase'
-import Collapse from '@mui/material/Collapse'
 import TableRow from '@mui/material/TableRow'
 import Checkbox from '@mui/material/Checkbox'
 import AddIcon from '@mui/icons-material/Add'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
-import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
 import Fab from '@mui/material/Fab'
@@ -30,6 +26,7 @@ import type { Moment } from 'moment'
 
 import { ItemOption, type PaginatedResponse, type Task, TaskPriority, TaskState } from '@types'
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
+import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
 import { CustomFilterPanel } from '@/components/molecules/CustomFilterPanel'
 import { FilterPanel } from '@/components/molecules/FilterPanel'
 import { TaskModal } from '@/components/organisms/TaskModal'
@@ -106,8 +103,6 @@ export const TaskTable: React.FC = () => {
     }
   }
 
-  const [searchExpanded, setSearchExpanded] = useState(false)
-  const searchInputRef = useRef<HTMLInputElement>(null)
   const [search, setSearch] = useState('')
 
   const [expiryDate, setExpiryDate] = useState<Moment>()
@@ -128,7 +123,7 @@ export const TaskTable: React.FC = () => {
     }
 
     if (expiryDate) {
-      filters.expiry_date = expiryDate.toISOString()
+      filters.expiry_date = expiryDate.format('YYYY-MM-DD')
     }
 
     if (selectedPriorities.length > 0) {
@@ -169,10 +164,6 @@ export const TaskTable: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, debouncedSearch])
 
-  if (error) {
-    return <div>Error: {error}</div>
-  }
-
   return (
     <>
       <EnhancedTable
@@ -180,6 +171,7 @@ export const TaskTable: React.FC = () => {
         isLoading={isLoading}
         headCells={headCells}
         rows={data.hits}
+        error={error}
         title="Tasks"
         filters={(
           <Stack direction="row" spacing={1}>
@@ -199,7 +191,13 @@ export const TaskTable: React.FC = () => {
                   <DatePicker
                     autoFocus
                     label="Expiry Date"
-                    value={expiryDate}
+                    value={expiryDate ?? null}
+                    slotProps={{
+                      textField: {
+                        variant: 'outlined',
+                        size: 'small',
+                      },
+                    }}
                     onChange={(value) => value && setExpiryDate(value)}
                   />
                 </LocalizationProvider>
@@ -261,31 +259,7 @@ export const TaskTable: React.FC = () => {
               </IconButton>
             </Tooltip>
 
-            <Paper
-              component="form"
-              variant="outlined"
-              sx={{
-                width: 'auto',
-                display: 'flex',
-                alignItems: 'center',
-                ...!searchExpanded && { border: 'none' }
-              }}
-            >
-              <IconButton aria-label="menu" onClick={() => setSearchExpanded((prev) => !prev)}>
-                <SearchIcon />
-              </IconButton>
-
-              <Collapse orientation="horizontal" in={searchExpanded} onEntered={() => searchInputRef.current?.focus()}>
-                <InputBase
-                  sx={{ width: 200 }}
-                  value={search}
-                  placeholder="Search..."
-                  inputProps={{ ref: searchInputRef }}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onBlur={() => search.length === 0 && setSearchExpanded(false)}
-                />
-              </Collapse>
-            </Paper>
+            <ExpandableSearchBar value={search} onChange={setSearch} />
           </Stack>
         )}
         renderRow={(row, index, handleClick, isItemSelected) => {
@@ -344,6 +318,7 @@ export const TaskTable: React.FC = () => {
           setOrder(order)
           refetch()
         }}
+        onRefresh={refetch}
       />
 
       <TaskModal

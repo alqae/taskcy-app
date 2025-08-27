@@ -205,7 +205,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, readonly, isLo
             <DateTimePicker
               label="Expiry Date"
               disabled={isLoading}
-              value={formattedExpiryDate}
+              value={formattedExpiryDate ?? null}
               slotProps={{
                 textField: {
                   error: Boolean(form.formState.errors.expiryDate),
@@ -228,7 +228,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, readonly, isLo
         <Grid size={{ xs: 12, md: 6 }}>
           <ListBox
             label="Category"
-            value={selectedCategory}
+            value={selectedCategory || null}
             onChange={(value) => {
               setSelectedCategory(value)
               form.setValue(

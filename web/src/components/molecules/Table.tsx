@@ -1,6 +1,7 @@
-import TableContainer from '@mui/material/TableContainer'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import TablePagination from '@mui/material/TablePagination'
 import TableSortLabel from '@mui/material/TableSortLabel'
+import TableContainer from '@mui/material/TableContainer'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
@@ -18,6 +19,7 @@ import Table from '@mui/material/Table'
 import React, { useMemo } from 'react'
 import Box from '@mui/material/Box'
 import { Skeleton } from '@mui/material'
+
 import { EmptyState } from './EmptyState'
 
 export type Order = 'asc' | 'desc'
@@ -145,6 +147,8 @@ export interface EnhancedTableProps<T> {
   pagination: { page: number, rowsPerPage: number }
   onPaginationChange: (page: number, rowsPerPage: number) => void
   isLoading?: boolean
+  error?: string
+  onRefresh?: () => void
 }
 
 export const EnhancedTable = <T extends { id: number }>({
@@ -158,7 +162,9 @@ export const EnhancedTable = <T extends { id: number }>({
   onPaginationChange,
   sort,
   pagination,
-  isLoading
+  isLoading,
+  error,
+  onRefresh,
 }: EnhancedTableProps<T>) => {
   const [selected, setSelected] = React.useState<readonly number[]>([])
 
@@ -237,17 +243,33 @@ export const EnhancedTable = <T extends { id: number }>({
                 rows.map((row, index) => renderRow(row, index, handleClick, selected.includes(row.id)))
               )}
 
-              {rows.length === 0 && (
+              {error ? (
                 <TableRow>
                   <TableCell colSpan={headCells.length + 1}>
                     <EmptyState
-                      title="No data"
-                      subtitle="When you have data, they'll appear here"
+                      title="Error"
+                      subtitle="An error occurred while loading the data"
+                      icon={WarningAmberIcon}
                       showActions
                       borderLess
+                      onAction={onRefresh}
                     />
                   </TableCell>
                 </TableRow>
+              ) : (
+                rows.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={headCells.length + 1}>
+                      <EmptyState
+                        title="No data"
+                        subtitle="When you have data, they'll appear here"
+                        showActions
+                        borderLess
+                        onAction={onRefresh}
+                      />
+                    </TableCell>
+                  </TableRow>
+                )
               )}
 
               {emptyRows > 0 && (

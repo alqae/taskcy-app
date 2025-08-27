@@ -129,7 +129,7 @@ const StyledPopper = styled(Popper)({
 
 interface ListBoxProps {
   options: ItemOption[]
-  value?: ItemOption
+  value: ItemOption | null
   onChange: (value: ItemOption) => void
   label: string
   isLoading?: boolean
