@@ -12,7 +12,7 @@ const TasksPage: React.FC = () => {
         <meta name="description" content="This is the tasks page of Taskcy." />
       </Helmet>
 
-      <TaskTable />
+      <TaskTable showAddModal />
     </ErrorBoundary>
   )
 }

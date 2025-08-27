@@ -47,15 +47,15 @@ export const TaskModal: React.FC<TaskModalProps> = ({ renderLauncher, onSubmit, 
   const [open, setOpen] = React.useState(false)
 
   const title = useMemo(() => {
+    if (!task) {
+      return 'New Task'
+    }
+
     if (isEditable) {
       return 'Edit Task'
     }
 
-    if (task) {
-      return task.name
-    }
-
-    return 'New Task'
+    return task.name
   }, [task, isEditable])
 
   const extensions = useExtensions({

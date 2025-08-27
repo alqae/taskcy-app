@@ -35,6 +35,7 @@ interface TaskFiltersProps {
   onSelectedCategoriesChange: (categories: string[]) => void
   selectedTags: string[]
   onSelectedTagsChange: (tags: string[]) => void
+  skipStates?: boolean
   search: string
   onSearchChange: (search: string) => void
 }
@@ -66,6 +67,7 @@ const DesktopTaskFilters: React.FC<FilterPropsWithResponses> = ({
   onSelectedCategoriesChange,
   selectedTags,
   onSelectedTagsChange,
+  skipStates,
   search,
   onSearchChange,
 }) => {
@@ -120,17 +122,19 @@ const DesktopTaskFilters: React.FC<FilterPropsWithResponses> = ({
         onChange={(value) => onSelectedPrioritiesChange(value as TaskPriority[])}
       />
 
-      <FilterPanel
-        icon={<MonitorHeartIcon />}
-        title="State"
-        columns={[
-          { label: 'Todo', value: TaskState.TODO },
+      {!skipStates && (
+        <FilterPanel
+          icon={<MonitorHeartIcon />}
+          title="State"
+          columns={[
+            { label: 'Todo', value: TaskState.TODO },
           { label: 'In Progress', value: TaskState.IN_PROGRESS },
           { label: 'Completed', value: TaskState.COMPLETED },
         ]}
         value={selectedStates}
         onChange={(value) => onSelectedStatesChange(value as TaskState[])}
       />
+      )}
 
       <FilterPanel
         icon={<CategoryIcon />}
@@ -166,6 +170,7 @@ const MobileTaskFilters: React.FC<FilterPropsWithResponses> = ({
   onSelectedCategoriesChange,
   selectedTags,
   onSelectedTagsChange,
+  skipStates,
 }) => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<HTMLElement>()
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
@@ -234,6 +239,7 @@ const MobileTaskFilters: React.FC<FilterPropsWithResponses> = ({
           </Button>
         </Stack>
       </CustomFilterPanel>
+
       <FilterPanel
         asMenuItem
         icon={<PriorityHighIcon />}
@@ -247,18 +253,20 @@ const MobileTaskFilters: React.FC<FilterPropsWithResponses> = ({
         onChange={(value) => onSelectedPrioritiesChange(value as TaskPriority[])}
       />
 
-      <FilterPanel
-        asMenuItem
-        icon={<MonitorHeartIcon />}
-        title="State"
-        columns={[
-          { label: 'Todo', value: TaskState.TODO },
-          { label: 'In Progress', value: TaskState.IN_PROGRESS },
-          { label: 'Completed', value: TaskState.COMPLETED },
-        ]}
-        value={selectedStates}
-        onChange={(value) => onSelectedStatesChange(value as TaskState[])}
-      />
+      {!skipStates && (
+        <FilterPanel
+          asMenuItem
+          icon={<MonitorHeartIcon />}
+          title="State"
+          columns={[
+            { label: 'Todo', value: TaskState.TODO },
+            { label: 'In Progress', value: TaskState.IN_PROGRESS },
+            { label: 'Completed', value: TaskState.COMPLETED },
+          ]}
+          value={selectedStates}
+          onChange={(value) => onSelectedStatesChange(value as TaskState[])}
+        />
+      )}
 
       <FilterPanel
         asMenuItem

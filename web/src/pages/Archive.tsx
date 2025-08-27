@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async'
 import React from 'react'
 
+import { TaskTable } from '@/components/organisms/TaskTable'
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
+import { TaskState } from '@types'
 
 const ArchivePage: React.FC = () => {
   return (
@@ -11,7 +13,7 @@ const ArchivePage: React.FC = () => {
         <meta name="description" content="This is the archive page of Taskcy." />
       </Helmet>
 
-      <div>Archive</div>
+      <TaskTable allowedStates={[TaskState.ARCHIVED]} title="Archive" />
     </ErrorBoundary>
   )
 }

@@ -21,45 +21,6 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { useApi } from '@/hooks/useApi'
 import { textOn } from '@/utils'
 
-const headCells: readonly HeadCell<Task>[] = [
-  {
-    id: 'name',
-    numeric: false,
-    disablePadding: true,
-    label: 'Name',
-  },
-  {
-    id: 'priority',
-    numeric: true,
-    disablePadding: false,
-    label: 'Priority',
-  },
-  {
-    id: 'expiryDate',
-    numeric: true,
-    disablePadding: false,
-    label: 'Expiry Date',
-  },
-  {
-    id: 'state',
-    numeric: true,
-    disablePadding: false,
-    label: 'State',
-  },
-  {
-    id: 'category',
-    numeric: true,
-    disablePadding: false,
-    label: 'Category',
-  },
-  {
-    id: 'tags',
-    numeric: true,
-    disablePadding: false,
-    label: 'Tags',
-  },
-]
-
 const getColorByState = (state: TaskState) => {
   switch (state) {
     case TaskState.TODO:
@@ -82,8 +43,13 @@ const getColorByPriority = (priority: TaskPriority) => {
   }
 }
 
-export const TaskTable: React.FC = () => {
+interface TaskTableProps {
+  allowedStates?: TaskState[]
+  title?: string
+  showAddModal?: boolean
+}
 
+export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title = 'Tasks', showAddModal = false }) => {
   const [order, setOrder] = React.useState<Order>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof Task>('expiryDate')
   const [page, setPage] = React.useState(0)
@@ -94,11 +60,54 @@ export const TaskTable: React.FC = () => {
   const [expiryDate, setExpiryDate] = useState<Moment>()
 
   const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([])
-  const [selectedStates, setSelectedStates] = useState<TaskState[]>([])
+  const [selectedStates, setSelectedStates] = useState<TaskState[]>(allowedStates)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedTags, setSelectedTags] = useState<string[]>([])
 
-  const debouncedSearch = useDebounce(search, 800);
+  const debouncedSearch = useDebounce(search, 800)
+
+  const skipStates = allowedStates.length > 0
+
+  const headCells: readonly HeadCell<Task>[] = [
+    {
+      id: 'name',
+      numeric: false,
+      disablePadding: true,
+      label: 'Name',
+    },
+    {
+      id: 'priority',
+      numeric: true,
+      disablePadding: false,
+      label: 'Priority',
+    },
+    {
+      id: 'expiryDate',
+      numeric: true,
+      disablePadding: false,
+      label: 'Expiry Date',
+    },
+    ...(skipStates ? [] : [
+      {
+        id: 'state',
+        numeric: true,
+        disablePadding: false,
+        label: 'State',
+      } as HeadCell<Task>,
+    ]),
+    {
+      id: 'category',
+      numeric: true,
+      disablePadding: false,
+      label: 'Category',
+    },
+    {
+      id: 'tags',
+      numeric: true,
+      disablePadding: false,
+      label: 'Tags',
+    },
+  ]
 
   const query = useMemo(() => {
     const filters: Record<string, string> = {
@@ -158,7 +167,7 @@ export const TaskTable: React.FC = () => {
         headCells={headCells}
         rows={data.hits}
         error={error}
-        title="Tasks"
+        title={title}
         filters={(
           <Stack direction="row" spacing={1}>
             <TaskFilters
@@ -174,6 +183,7 @@ export const TaskTable: React.FC = () => {
               onSelectedTagsChange={setSelectedTags}
               search={search}
               onSearchChange={setSearch}
+              skipStates={skipStates}
             />
 
             <Divider orientation="vertical" flexItem />
@@ -221,9 +231,11 @@ export const TaskTable: React.FC = () => {
                       <Chip label={capitalize(row.priority)} color={getColorByPriority(row.priority)} />
                     </TableCell>
                     <TableCell align="right" onClick={toggle}>{row.expiryDate}</TableCell>
-                    <TableCell align="right" onClick={toggle}>
-                      <Chip label={capitalize(row.state.replace('_', ' '))} color={getColorByState(row.state)} />
-                    </TableCell>
+                    {!skipStates && (
+                      <TableCell align="right" onClick={toggle}>
+                        <Chip label={capitalize(row.state.replace('_', ' '))} color={getColorByState(row.state)} />
+                      </TableCell>
+                    )}
                     <TableCell align="right" onClick={toggle}>
                       <Chip label={row.category.name} sx={{ bgcolor: row.category.color, color: textOn(row.category.color) }} />
                     </TableCell>
@@ -259,20 +271,22 @@ export const TaskTable: React.FC = () => {
         onRefresh={refetch}
       />
 
-      <TaskModal
-        onSubmit={refetch}
-        renderLauncher={(toggle) => (
-          <Fab
-            color="primary"
-            variant="extended"
-            onClick={toggle}
-            sx={{ position: 'fixed', bottom: { xs: 16, sm: 32 }, right: { xs: 16, sm: 32 } }}
-          >
-            <AddIcon sx={{ mr: 1 }} />
-            Add
-          </Fab>
-        )}
-      />
+      {showAddModal && (
+        <TaskModal
+          onSubmit={refetch}
+          renderLauncher={(toggle) => (
+            <Fab
+              color="primary"
+              variant="extended"
+              onClick={toggle}
+              sx={{ position: 'fixed', bottom: { xs: 16, sm: 32 }, right: { xs: 16, sm: 32 } }}
+            >
+              <AddIcon sx={{ mr: 1 }} />
+              Add
+            </Fab>
+          )}
+        />
+      )}
     </>
   )
 }
