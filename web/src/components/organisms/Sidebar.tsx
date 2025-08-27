@@ -214,7 +214,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = ({ children }) => {
         </List>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, py: 2, overflowX: 'auto' }}>
         <DrawerHeader />
         <Container>{children}</Container>
       </Box>

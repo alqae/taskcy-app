@@ -115,9 +115,9 @@ export const TaskModal: React.FC<TaskModalProps> = ({ renderLauncher, onSubmit, 
             }}
           />
         ) : (
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 0, sm: 3 }}>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <List dense>
+              <List dense disablePadding>
                 <ListItem>
                   <ListItemAvatar>
                     <Avatar>
@@ -148,7 +148,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ renderLauncher, onSubmit, 
             </Grid>
 
             <Grid size={{ xs: 12, sm: 6 }}>
-              <List dense>
+              <List dense disablePadding>
                 <ListItem>
                   <ListItemAvatar>
                     <Avatar>

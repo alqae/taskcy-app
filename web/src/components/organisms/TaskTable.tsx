@@ -1,36 +1,25 @@
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import React, { useState, useMemo, useEffect } from 'react'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh'
-import MonitorHeartIcon from '@mui/icons-material/MonitorHeart'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import DownloadIcon from '@mui/icons-material/Download'
-import CategoryIcon from '@mui/icons-material/Category'
-import TodayIcon from '@mui/icons-material/Today'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Checkbox from '@mui/material/Checkbox'
 import AddIcon from '@mui/icons-material/Add'
-import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
+import Divider from '@mui/material/Divider'
+import { capitalize } from '@mui/material'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
-import Fab from '@mui/material/Fab'
-import { capitalize } from '@mui/material'
-import Button from '@mui/material/Button'
-import Badge from '@mui/material/Badge'
 import type { Moment } from 'moment'
+import Fab from '@mui/material/Fab'
 
-import { ItemOption, type PaginatedResponse, type Task, TaskPriority, TaskState } from '@types'
+import { type PaginatedResponse, type Task, TaskPriority, TaskState } from '@types'
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
-import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
-import { CustomFilterPanel } from '@/components/molecules/CustomFilterPanel'
-import { FilterPanel } from '@/components/molecules/FilterPanel'
 import { TaskModal } from '@/components/organisms/TaskModal'
+import { TaskFilters } from '../molecules/TaskFilters'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useApi } from '@/hooks/useApi'
+import { textOn } from '@/utils'
 
 const headCells: readonly HeadCell<Task>[] = [
   {
@@ -71,36 +60,34 @@ const headCells: readonly HeadCell<Task>[] = [
   },
 ]
 
+const getColorByState = (state: TaskState) => {
+  switch (state) {
+    case TaskState.TODO:
+      return 'info'
+    case TaskState.IN_PROGRESS:
+      return 'warning'
+    case TaskState.COMPLETED:
+      return 'success'
+  }
+}
+
+const getColorByPriority = (priority: TaskPriority) => {
+  switch (priority) {
+    case TaskPriority.LOW:
+      return 'info'
+    case TaskPriority.MEDIUM:
+      return 'warning'
+    case TaskPriority.HIGH:
+      return 'error'
+  }
+}
+
 export const TaskTable: React.FC = () => {
-  const categoriesResponse = useApi<ItemOption[]>('/categories/options')
-  const tagsResponse = useApi<ItemOption[]>('/tags/options')
 
   const [order, setOrder] = React.useState<Order>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof Task>('expiryDate')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
-
-  const getColorByState = (state: TaskState) => {
-    switch (state) {
-      case TaskState.TODO:
-        return 'info'
-      case TaskState.IN_PROGRESS:
-        return 'warning'
-      case TaskState.COMPLETED:
-        return 'success'
-    }
-  }
-
-  const getColorByPriority = (priority: TaskPriority) => {
-    switch (priority) {
-      case TaskPriority.LOW:
-        return 'info'
-      case TaskPriority.MEDIUM:
-        return 'warning'
-      case TaskPriority.HIGH:
-        return 'error'
-    }
-  }
 
   const [search, setSearch] = useState('')
 
@@ -160,7 +147,7 @@ export const TaskTable: React.FC = () => {
 
   useEffect(() => {
     refetch()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, debouncedSearch])
 
   return (
@@ -174,91 +161,28 @@ export const TaskTable: React.FC = () => {
         title="Tasks"
         filters={(
           <Stack direction="row" spacing={1}>
-            <CustomFilterPanel
-              renderLauncher={(toggle) => (
-                <Tooltip title="Filter">
-                  <IconButton onClick={toggle}>
-                    <Badge color="secondary" variant="dot" invisible={!expiryDate}>
-                      <TodayIcon />
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
-              )}
-            >
-              <Stack justifyContent="end" spacing={1}>
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                  <DatePicker
-                    autoFocus
-                    label="Expiry Date"
-                    value={expiryDate ?? null}
-                    slotProps={{
-                      textField: {
-                        variant: 'outlined',
-                        size: 'small',
-                      },
-                    }}
-                    onChange={(value) => value && setExpiryDate(value)}
-                  />
-                </LocalizationProvider>
-
-                <Button
-                  variant="contained"
-                  onClick={() => setExpiryDate(undefined)}
-                  sx={{ display: expiryDate ? 'block' : 'none' }}
-                >
-                  Clear
-                </Button>
-              </Stack>
-            </CustomFilterPanel>
-
-            <FilterPanel
-              icon={<PriorityHighIcon />}
-              title="Priority"
-              columns={[
-                { label: 'Low', value: TaskPriority.LOW },
-                { label: 'Medium', value: TaskPriority.MEDIUM },
-                { label: 'High', value: TaskPriority.HIGH },
-              ]}
-              value={selectedPriorities}
-              onChange={(value) => setSelectedPriorities(value as TaskPriority[])}
-            />
-
-            <FilterPanel
-              icon={<MonitorHeartIcon />}
-              title="State"
-              columns={[
-                { label: 'Todo', value: TaskState.TODO },
-                { label: 'In Progress', value: TaskState.IN_PROGRESS },
-                { label: 'Completed', value: TaskState.COMPLETED },
-              ]}
-              value={selectedStates}
-              onChange={(value) => setSelectedStates(value as TaskState[])}
-            />
-
-            <FilterPanel
-              icon={<CategoryIcon />}
-              title="Category"
-              columns={categoriesResponse.data || []}
-              value={selectedCategories}
-              onChange={(value) => setSelectedCategories(value as string[])}
-            />
-
-            <FilterPanel
-              icon={<LocalOfferIcon />}
-              title="Tags"
-              columns={tagsResponse.data || []}
-              value={selectedTags}
-              onChange={(value) => setSelectedTags(value as string[])}
+            <TaskFilters
+              expiryDate={expiryDate}
+              onExpiryDateChange={setExpiryDate}
+              selectedPriorities={selectedPriorities}
+              onSelectedPrioritiesChange={setSelectedPriorities}
+              selectedStates={selectedStates}
+              onSelectedStatesChange={setSelectedStates}
+              selectedCategories={selectedCategories}
+              onSelectedCategoriesChange={setSelectedCategories}
+              selectedTags={selectedTags}
+              onSelectedTagsChange={setSelectedTags}
+              search={search}
+              onSearchChange={setSearch}
             />
 
             <Divider orientation="vertical" flexItem />
+
             <Tooltip title="Export">
               <IconButton>
                 <DownloadIcon />
               </IconButton>
             </Tooltip>
-
-            <ExpandableSearchBar value={search} onChange={setSearch} />
           </Stack>
         )}
         renderRow={(row, index, handleClick, isItemSelected) => {
@@ -301,11 +225,17 @@ export const TaskTable: React.FC = () => {
                       <Chip label={capitalize(row.state.replace('_', ' '))} color={getColorByState(row.state)} />
                     </TableCell>
                     <TableCell align="right" onClick={toggle}>
-                      <Chip label={row.category?.name || 'No Category'} color="default" />
+                      <Chip label={row.category.name} sx={{ bgcolor: row.category.color, color: textOn(row.category.color) }} />
                     </TableCell>
                     <TableCell align="right" onClick={toggle}>
                       <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="flex-end">
-                        {row.tags.map((tag) => <Chip key={tag.id} label={tag.name} color="default" />)}
+                        {row.tags.map((tag) => (
+                          <Chip
+                            key={tag.id}
+                            label={tag.name}
+                            sx={{ bgcolor: tag.color, color: textOn(tag.color) }}
+                          />
+                        ))}
                       </Stack>
                     </TableCell>
                   </>

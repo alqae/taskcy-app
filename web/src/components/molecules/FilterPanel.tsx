@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton'
 import InputBase from '@mui/material/InputBase'
 import ListItem from '@mui/material/ListItem'
 import Checkbox from '@mui/material/Checkbox'
+import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
 import Divider from '@mui/material/Divider'
 import Popover from '@mui/material/Popover'
@@ -25,6 +26,7 @@ interface FilterPanelProps {
     value: string
   }[]
   value: string[]
+  asMenuItem?: boolean
   onChange: (value: string[]) => void
 }
 
@@ -34,6 +36,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   columns,
   value: selectedColumns,
   onChange,
+  asMenuItem,
 }) => {
   const [searchValue, setSearchValue] = useState('')
 
@@ -79,11 +82,22 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   return (
     <>
       <Tooltip title={title}>
-        <IconButton onClick={handleClick}>
-          <Badge badgeContent={selectedColumns.length} color="secondary">
-            {icon}
-          </Badge>
-        </IconButton>
+        {asMenuItem ? (
+          <MenuItem dense onClick={handleClick}>
+            <IconButton>
+              <Badge badgeContent={selectedColumns.length} color="secondary">
+                {icon}
+              </Badge>
+            </IconButton>
+            <p>{title}</p>
+          </MenuItem>
+        ) : (
+          <IconButton onClick={handleClick}>
+            <Badge badgeContent={selectedColumns.length} color="secondary">
+              {icon}
+            </Badge>
+          </IconButton>
+        )}
       </Tooltip>
 
       <Popover

@@ -11,7 +11,7 @@ type UseApiOptions<R> = {
   query?: Record<string, string>
 }
 
-type ApiState<T, R> = {
+export type ApiState<T, R> = {
   data?: T
   error?: string
   isLoading: boolean

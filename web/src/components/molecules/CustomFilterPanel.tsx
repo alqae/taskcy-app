@@ -4,18 +4,18 @@ import Popover from '@mui/material/Popover'
 
 interface CustomFilterPanelProps extends React.PropsWithChildren {
   title?: string
-  renderLauncher: (toggle: (event: React.MouseEvent<HTMLButtonElement>) => void) => React.ReactNode
+  renderLauncher: (toggle: (event: HTMLElement) => void) => React.ReactNode
 }
 
 export const CustomFilterPanel: React.FC<CustomFilterPanelProps> = ({ title = 'Filter', renderLauncher, children }) => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement>()
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
+  const handleClick = (event: HTMLElement) => {
+    setAnchorEl(event)
   }
 
   const handleClose = () => {
-    setAnchorEl(null)
+    setAnchorEl(undefined)
   }
 
   const open = Boolean(anchorEl)
