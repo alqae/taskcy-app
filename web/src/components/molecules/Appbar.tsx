@@ -7,6 +7,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import InputBase from '@mui/material/InputBase'
+import { useNavigate } from 'react-router-dom'
 import MenuIcon from '@mui/icons-material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Toolbar from '@mui/material/Toolbar'
@@ -16,6 +17,7 @@ import Menu from '@mui/material/Menu'
 import Box from '@mui/material/Box'
 
 import SiteIcon from '@/assets/images/Logo.svg'
+import { Routes } from '@/types'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -92,50 +94,18 @@ interface AppBarProps {
 }
 
 export const Appbar: React.FC<AppBarProps> = ({ open, toggleDrawer, drawerWidth }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null)
-
-  const isMenuOpen = Boolean(anchorEl)
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<HTMLElement>()
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
 
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
   const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null)
-  }
-
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-    handleMobileMenuClose()
+    setMobileMoreAnchorEl(undefined)
   }
 
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget)
   }
 
-  const menuId = 'primary-search-account-menu'
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  )
+  const navigate = useNavigate()
 
   const mobileMenuId = 'primary-search-account-menu-mobile'
   const renderMobileMenu = (
@@ -154,11 +124,12 @@ export const Appbar: React.FC<AppBarProps> = ({ open, toggleDrawer, drawerWidth 
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      <MenuItem dense>
         <IconButton
-          size="large"
+          size="small"
           aria-label="show 17 new notifications"
           color="inherit"
+          sx={{ mr: 1 }}
         >
           <Badge badgeContent={17} color="error">
             <NotificationsIcon />
@@ -166,9 +137,9 @@ export const Appbar: React.FC<AppBarProps> = ({ open, toggleDrawer, drawerWidth 
         </IconButton>
         <p>Notifications</p>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem dense onClick={() => navigate(Routes.PROFILE)}>
         <IconButton
-          size="large"
+          size="small"
           aria-label="account of current user"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
@@ -232,9 +203,7 @@ export const Appbar: React.FC<AppBarProps> = ({ open, toggleDrawer, drawerWidth 
               size="large"
               edge="end"
               aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              onClick={() => navigate(Routes.PROFILE)}
               color="inherit"
             >
               <AccountCircle />
@@ -256,7 +225,6 @@ export const Appbar: React.FC<AppBarProps> = ({ open, toggleDrawer, drawerWidth 
         </Toolbar>
       </CustomAppBar>
       {renderMobileMenu}
-      {renderMenu}
     </>
   )
 }
