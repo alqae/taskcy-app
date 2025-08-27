@@ -195,8 +195,8 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
             </Tooltip>
           </Stack>
         )}
-        renderRow={(row, index, handleClick, isItemSelected) => {
-          const labelId = `task-table-checkbox-${index}`
+        renderRow={(row, _, handleClick, isItemSelected) => {
+          const labelId = `task-table-checkbox-${row.id}`
 
           return (
             <TableRow
@@ -210,12 +210,10 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
             >
               <TableCell padding="checkbox">
                 <Checkbox
+                  name={labelId}
                   color="primary"
                   checked={isItemSelected}
                   onChange={() => handleClick(row.id)}
-                  inputProps={{
-                    'aria-labelledby': labelId,
-                  }}
                 />
               </TableCell>
 

@@ -26,10 +26,10 @@ export const DeleteAccountBanner: React.FC = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle>Confirm Account Deletion</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Confirm Account Deletion</DialogTitle>
 
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText id="alert-dialog-description">
             Are you absolutely sure you want to delete your account? All your data,
             settings, and history will be permanently removed and cannot be recovered
           </DialogContentText>

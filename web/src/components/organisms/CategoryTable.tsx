@@ -96,8 +96,8 @@ export const CategoryTable: React.FC = () => {
             </Tooltip>
           </Stack>
         )}
-        renderRow={(row, index, handleClick, isItemSelected) => {
-          const labelId = `category-table-checkbox-${index}`
+        renderRow={(row, _, handleClick, isItemSelected) => {
+          const labelId = `category-table-checkbox-${row.id}`
 
           return (
             <TableRow
@@ -111,13 +111,10 @@ export const CategoryTable: React.FC = () => {
             >
               <TableCell padding="checkbox">
                 <Checkbox
-                  name={`category-table-checkbox-${row.id}`}
+                  name={labelId}
                   color="primary"
                   checked={isItemSelected}
                   onChange={() => handleClick(row.id)}
-                  inputProps={{
-                    'aria-labelledby': labelId,
-                  }}
                 />
               </TableCell>
               <TableCell component="th" id={labelId} scope="row" align="left">

@@ -24,7 +24,7 @@ const Settings: React.FC = () => (
     </Stack>
 
     <SpeedDial
-      ariaLabel="SpeedDial basic example"
+      ariaLabel="Settings Actions"
       icon={<SpeedDialIcon />}
       sx={{
         position: 'fixed',
