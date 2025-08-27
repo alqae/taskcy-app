@@ -44,7 +44,7 @@ export const getOptions = async (_: Request, res: Response) => {
   const categories = await AppDataSource.getRepository(Category).find({
     select: ["id", "name"],
   })
-  return res.json(categories.map((category) => ({ label: category.name, value: category.id })))
+  return res.json(categories.map((category) => ({ label: category.name, value: category.id.toString() })))
 }
 
 export const create = async (req: Request, res: Response) => {

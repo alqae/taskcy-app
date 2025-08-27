@@ -44,7 +44,7 @@ export const getOptions = async (_: Request, res: Response) => {
   const tags = await AppDataSource.getRepository(Tag).find({
     select: ["id", "name"],
   })
-  return res.json(tags.map((tag) => ({ label: tag.name, value: tag.id })))
+  return res.json(tags.map((tag) => ({ label: tag.name, value: tag.id.toString() })))
 }
 
 export const create = async (req: Request, res: Response) => {

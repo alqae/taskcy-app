@@ -74,6 +74,20 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
   const [selectedTags, setSelectedTags] = React.useState<ItemOption[]>([])
   const [selectedCategory, setSelectedCategory] = React.useState<ItemOption>()
 
+  useEffect(() => {
+    if (defaultValue) {
+      if (categoriesResponse.data?.length) {
+        const _selectedCategory = categoriesResponse.data?.find((category) => category.value === defaultValue.category!.id.toString())
+        setSelectedCategory(_selectedCategory)
+      }
+
+      if (tagsResponse.data?.length) {
+        const _selectedTags = tagsResponse.data?.filter((tag) => defaultValue.tags.some((t) => t.id.toString() === tag.value)) ?? []
+        setSelectedTags(_selectedTags)
+      }
+    }
+  }, [defaultValue, categoriesResponse.data, tagsResponse.data])
+
   return (
     <FormProvider {...form}>
       <Grid container spacing={2} component="form" onSubmit={form.handleSubmit(handleSubmit)}>
