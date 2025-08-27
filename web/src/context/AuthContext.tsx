@@ -19,14 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const API_URL = import.meta.env.VITE_API_URL
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<User | null>(
-    null
-    // new User({
-    //   id: 1,
-    //   firstName: 'John',
-    //   lastName: "Doe",
-    //   email: "john.doe@example.com",
-    //   tokenVersion: 0,
-    // })
+    // new User( 1, 'John', 'Doe', 'john.doe@example.com', 0)
   )
 
   const login = async (newUser: LoginRequest) => {

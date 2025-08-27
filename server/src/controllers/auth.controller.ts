@@ -24,6 +24,9 @@ export const login = async (req: Request, res: Response) => {
     return res.status(401).json({ message: "Invalid credentials" })
   }
 
+  user.tokenVersion = 1
+  await AppDataSource.getRepository(User).save(user)
+
   if (body.remember) {
     sendRefreshToken(res, createRefreshToken(user))
   }
@@ -95,9 +98,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 
   try {
     const payload = decodeToken<UserPayload>(token, true)
-    const user = await AppDataSource.getRepository(User).findOne({
-      where: { id: payload.id },
-    })
+    let user = await AppDataSource.getRepository(User).findOne({ where: { id: payload.id } })
 
     if (!user) {
       return res.status(404).json({ message: "User not found" })
@@ -110,17 +111,14 @@ export const refreshToken = async (req: Request, res: Response) => {
     user.tokenVersion++
     await AppDataSource.getRepository(User).save(user)
 
-    sendRefreshToken(res, createRefreshToken(user))
-    res.header("Authorization", createAccessToken(user))
+    const newRefreshToken = createRefreshToken(user)
+    const newAccessToken = createAccessToken(user)
+
+    sendRefreshToken(res, newRefreshToken)
+    res.header("Authorization", newAccessToken)
     return res.json(user)
   } catch (error) {
-    // Clear the cookie
-    res.cookie("jid", "", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      expires: new Date(0),
-    })
+    res.cookie("jid", "", { httpOnly: true, secure: false, sameSite: "lax", expires: new Date(0) })
     return res.status(401).json({ message: "Invalid token" })
   }
 }
