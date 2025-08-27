@@ -23,7 +23,6 @@ import Button from '@mui/material/Button'
 import Badge from '@mui/material/Badge'
 import type { Moment } from 'moment'
 
-
 import { ItemOption, type PaginatedResponse, type Task, TaskPriority, TaskState } from '@types'
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
 import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
@@ -285,24 +284,33 @@ export const TaskTable: React.FC = () => {
                   }}
                 />
               </TableCell>
-              <TableCell component="th" id={labelId} scope="row" padding="none">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">
-                <Chip label={capitalize(row.priority)} color={getColorByPriority(row.priority)} />
-              </TableCell>
-              <TableCell align="right">{row.expiryDate}</TableCell>
-              <TableCell align="right">
-                <Chip label={capitalize(row.state.replace('_', ' '))} color={getColorByState(row.state)} />
-              </TableCell>
-              <TableCell align="right">
-                <Chip label={row.category?.name || 'No Category'} color="default" />
-              </TableCell>
-              <TableCell align="right">
-                <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="flex-end">
-                  {row.tags.map((tag) => <Chip key={tag.id} label={tag.name} color="default" />)}
-                </Stack>
-              </TableCell>
+
+              <TaskModal
+                onSubmit={refetch}
+                task={row}
+                renderLauncher={(toggle) => (
+                  <>
+                    <TableCell component="th" id={labelId} scope="row" padding="none" onClick={toggle}>
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="right" onClick={toggle}>
+                      <Chip label={capitalize(row.priority)} color={getColorByPriority(row.priority)} />
+                    </TableCell>
+                    <TableCell align="right" onClick={toggle}>{row.expiryDate}</TableCell>
+                    <TableCell align="right" onClick={toggle}>
+                      <Chip label={capitalize(row.state.replace('_', ' '))} color={getColorByState(row.state)} />
+                    </TableCell>
+                    <TableCell align="right" onClick={toggle}>
+                      <Chip label={row.category?.name || 'No Category'} color="default" />
+                    </TableCell>
+                    <TableCell align="right" onClick={toggle}>
+                      <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="flex-end">
+                        {row.tags.map((tag) => <Chip key={tag.id} label={tag.name} color="default" />)}
+                      </Stack>
+                    </TableCell>
+                  </>
+                )}
+              />
             </TableRow>
           )
         }}
