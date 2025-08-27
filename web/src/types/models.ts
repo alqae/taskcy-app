@@ -54,7 +54,7 @@ export class Task {
   readonly id: number
   readonly name: string
   readonly description: string
-  readonly category?: Category
+  readonly category: Category
   readonly tags: Tag[]
   readonly user?: User
   readonly state: TaskState
@@ -66,7 +66,7 @@ export class Task {
     id: number,
     name: string,
     description: string,
-    category?: Category,
+    category: Category,
     tags: Tag[] = [],
     user?: User,
     state: TaskState = TaskState.TODO,

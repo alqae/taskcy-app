@@ -3,7 +3,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { User, type LoginRequest, type RegisterRequest } from '@types'
 
 type AuthContextType = {
-  user: User | null
+  user?: User
   isLoading: boolean
   isLoggedIn: boolean
   login: (user: LoginRequest) => Promise<void>
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const API_URL = import.meta.env.VITE_API_URL
   const [isLoading, setIsLoading] = useState(false)
-  const [user, setUser] = useState<User | null>(
+  const [user, setUser] = useState<User>(
     // new User( 1, 'John', 'Doe', 'john.doe@example.com', 0)
   )
 
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // TODO: Show error message
       return Promise.reject(error)
     } finally {
-      setUser(null)
+      setUser(undefined)
       setIsLoading(false)
       localStorage.removeItem('access_token')
     }
