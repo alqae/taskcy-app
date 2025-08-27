@@ -8,32 +8,35 @@ type UseApiOptions<R> = {
   method?: "GET" | "POST" | "PUT" | "DELETE"
   body?: R
   headers?: Record<string, string>
+  query?: Record<string, string>
 }
 
-type ApiState<T> = {
-  data: T | null
-  error: string | null
+type ApiState<T, R> = {
+  data?: T
+  error?: string
   isLoading: boolean
-  refetch: () => void
+  refetch: (options?: UseApiOptions<R>) => Promise<void>
 }
 
 export const useApi = <T = unknown, R = unknown>(
   endpoint: string,
-  { skip = false, method = "GET", body, headers }: UseApiOptions<R> = {}
-): ApiState<T> => {
+  { skip = false, method = "GET", body, headers, query }: UseApiOptions<R> = {}
+): ApiState<T, R> => {
   const { getAccessToken } = useAuth()
 
-  const [data, setData] = useState<T | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [data, setData] = useState<T>()
+  const [error, setError] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
-  const [trigger, setTrigger] = useState<number>(0)
+  const [isInitialized, setIsInitialized] = useState(false)
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (options?: UseApiOptions<R>) => {
+    if (isLoading) return
     setIsLoading(true)
-    setError(null)
+    setError(undefined)
 
     const requestHeaders: Record<string, string> = {
       ...headers,
+      ...options?.headers,
       'Content-Type': "application/json",
     }
 
@@ -43,10 +46,12 @@ export const useApi = <T = unknown, R = unknown>(
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
-        method,
+      const URL = `${import.meta.env.VITE_API_URL}${endpoint}`
+      const URLWithQuery = `${URL}?${new URLSearchParams(options && options.query ? options.query : query).toString()}`
+      const res = await fetch(URLWithQuery, {
         headers: requestHeaders,
-        body: method !== "GET" ? JSON.stringify(body) : undefined,
+        method: options?.method || method,
+        body: (options?.method || method) !== "GET" ? JSON.stringify(options?.body || body) : undefined,
       })
 
       if (!res.ok) throw new Error(`Error ${res.status}`)
@@ -62,18 +67,19 @@ export const useApi = <T = unknown, R = unknown>(
     } finally {
       setIsLoading(false)
     }
-  }, [headers, getAccessToken, endpoint, method, body])
+  }, [isLoading, headers, getAccessToken, endpoint, query, method, body])
 
   useEffect(() => {
-    if (!skip) {
+    if (!skip && !isInitialized) {
+      setIsInitialized(true)
       fetchData()
     }
-  }, [skip, fetchData, trigger])
+  }, [skip, fetchData, isInitialized])
 
   return {
     data,
     error,
     isLoading,
-    refetch: () => setTrigger((p) => p + 1),
+    refetch: fetchData,
   }
 }

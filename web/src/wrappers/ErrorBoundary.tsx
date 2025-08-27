@@ -34,8 +34,9 @@ class ErrorBoundary extends React.Component<Props, State> {
           <Alert
             severity="error"
             variant="filled"
+            sx={{ width: "100%" }}
             action={
-              <Button color="inherit" size="small" onClick={this.handleReset}>
+              <Button color="inherit" variant="outlined" size="small" onClick={this.handleReset}>
                 Try again
               </Button>
             }
