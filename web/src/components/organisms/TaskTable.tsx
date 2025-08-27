@@ -15,11 +15,13 @@ import InputBase from '@mui/material/InputBase'
 import Collapse from '@mui/material/Collapse'
 import TableRow from '@mui/material/TableRow'
 import Checkbox from '@mui/material/Checkbox'
+import AddIcon from '@mui/icons-material/Add'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
+import Fab from '@mui/material/Fab'
 import { capitalize } from '@mui/material'
 import Button from '@mui/material/Button'
 import Badge from '@mui/material/Badge'
@@ -30,6 +32,7 @@ import { ItemOption, type PaginatedResponse, type Task, TaskPriority, TaskState 
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
 import { CustomFilterPanel } from '@/components/molecules/CustomFilterPanel'
 import { FilterPanel } from '@/components/molecules/FilterPanel'
+import { TaskModal } from '@/components/organisms/TaskModal'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useApi } from '@/hooks/useApi'
 
@@ -341,6 +344,21 @@ export const TaskTable: React.FC = () => {
           setOrder(order)
           refetch()
         }}
+      />
+
+      <TaskModal
+        onSubmit={refetch}
+        renderLauncher={(toggle) => (
+          <Fab
+            color="primary"
+            variant="extended"
+            onClick={toggle}
+            sx={{ position: 'fixed', bottom: { xs: 16, sm: 32 }, right: { xs: 16, sm: 32 } }}
+          >
+            <AddIcon sx={{ mr: 1 }} />
+            Add
+          </Fab>
+        )}
       />
     </>
   )
