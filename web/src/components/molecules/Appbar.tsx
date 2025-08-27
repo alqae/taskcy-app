@@ -183,7 +183,7 @@ export const Appbar: React.FC<AppBarProps> = ({ open, toggleDrawer, drawerWidth 
               <SearchIcon />
             </SearchIconWrapper>
 
-            <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }}/>
+            <StyledInputBase name="global-search" placeholder="Search…" inputProps={{ 'aria-label': 'search' }}/>
           </Search>
 
           <Box sx={{ flexGrow: 1 }} />

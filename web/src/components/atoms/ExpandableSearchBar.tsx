@@ -6,12 +6,13 @@ import IconButton from '@mui/material/IconButton'
 import SearchIcon from '@mui/icons-material/Search'
 
 interface ExpandableSearchBarProps {
+  name: string
   placeholder?: string
   value: string
   onChange: (value: string) => void
 }
 
-export const ExpandableSearchBar: React.FC<ExpandableSearchBarProps> = ({ placeholder = 'Search...', value, onChange }) => {
+export const ExpandableSearchBar: React.FC<ExpandableSearchBarProps> = ({ name, placeholder = 'Search...', value, onChange }) => {
   const [searchExpanded, setSearchExpanded] = React.useState(false)
   const searchInputRef = React.useRef<HTMLInputElement>(null)
 
@@ -34,6 +35,7 @@ export const ExpandableSearchBar: React.FC<ExpandableSearchBarProps> = ({ placeh
       <InputBase
         sx={{ width: 200 }}
         value={value}
+        name={name}
         placeholder={placeholder}
         inputProps={{ ref: searchInputRef }}
         inputMode="search"

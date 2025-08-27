@@ -87,7 +87,7 @@ export const CategoryTable: React.FC = () => {
         title="Categories"
         filters={(
           <Stack direction="row" spacing={1}>
-            <ExpandableSearchBar value={search} onChange={setSearch} />
+            <ExpandableSearchBar name="category-table-search" value={search} onChange={setSearch} />
             <Divider orientation="vertical" flexItem />
             <Tooltip title="Export">
               <IconButton>
@@ -111,6 +111,7 @@ export const CategoryTable: React.FC = () => {
             >
               <TableCell padding="checkbox">
                 <Checkbox
+                  name={`category-table-checkbox-${row.id}`}
                   color="primary"
                   checked={isItemSelected}
                   onChange={() => handleClick(row.id)}

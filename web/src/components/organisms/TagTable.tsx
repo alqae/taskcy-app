@@ -87,7 +87,7 @@ export const TagTable: React.FC = () => {
         title="Tags"
         filters={(
           <Stack direction="row" spacing={1}>
-            <ExpandableSearchBar value={search} onChange={setSearch} />
+            <ExpandableSearchBar name="tag-table-search" value={search} onChange={setSearch} />
             <Divider orientation="vertical" flexItem />
             <Tooltip title="Export">
               <IconButton>
@@ -111,6 +111,7 @@ export const TagTable: React.FC = () => {
             >
               <TableCell padding="checkbox">
                 <Checkbox
+                  name={`tag-table-checkbox-${row.id}`}
                   color="primary"
                   checked={isItemSelected}
                   onChange={() => handleClick(row.id)}

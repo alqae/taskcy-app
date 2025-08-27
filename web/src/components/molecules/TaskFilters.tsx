@@ -148,7 +148,7 @@ const DesktopTaskFilters: React.FC<FilterPropsWithResponses> = ({
         onChange={(value) => onSelectedTagsChange(value as string[])}
       />
 
-      <ExpandableSearchBar value={search} onChange={onSearchChange} />
+      <ExpandableSearchBar name="task-filter-search" value={search} onChange={onSearchChange} />
     </>
   )
 }

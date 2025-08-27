@@ -144,7 +144,7 @@ const NotificationsPage: React.FC = () => {
       <Paper component={Stack} gap={2} sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ p: 2 }}>
-            <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
+            <Typography variant="h6" component="h2">
               Notifications
             </Typography>
 
@@ -194,8 +194,13 @@ const NotificationsPage: React.FC = () => {
                       {notification.title}
                     </Typography>
                   }
+                  slotProps={{
+                    secondary: {
+                      component: Box,
+                    }
+                  }}
                   secondary={
-                    <Box>
+                    <>
                       <Typography
                         variant="body2"
                         color="text.secondary"
@@ -227,7 +232,7 @@ const NotificationsPage: React.FC = () => {
                           }}
                         />
                       </Box>
-                    </Box>
+                    </>
                   }
                 />
               </ListItem>
