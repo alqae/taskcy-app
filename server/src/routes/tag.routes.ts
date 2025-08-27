@@ -20,9 +20,16 @@ const router = Router()
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Tag'
+ *               type: object
+ *               properties:
+ *                 hits:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Tag'
+ *                 total:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
  */
 router.get("/", TagController.getAll)
 

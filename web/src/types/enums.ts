@@ -6,6 +6,7 @@ export enum Routes {
   PROFILE = '/profile',
   ARCHIVE = '/archive',
   TASKS = '/tasks',
+  SETTINGS = '/settings',
 }
 
 export enum TaskState {

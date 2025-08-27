@@ -18,9 +18,16 @@ const router = Router()
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Category'
+ *               type: object
+ *               properties:
+ *                 hits:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Category'
+ *                 total:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
  */
 router.get("/", CategoryController.getAll)
 

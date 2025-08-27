@@ -20,9 +20,16 @@ const router = Router()
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/TaskWithRelation'
+ *               type: object
+ *               properties:
+ *                 hits:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/TaskWithRelation'
+ *                 total:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
  */
 router.get("/", TaskController.getAll)
 

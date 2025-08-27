@@ -10,8 +10,6 @@ import { User } from "../entities/User"
 import { Tag } from "../entities/Tag"
 
 export const getAll = async (req: Request, res: Response) => {
-  // TODO add state, expiry_date, priority, category_id, search (name, description), tags_ids
-
   if (!req.query.take || !req.query.skip || !req.query.sort_by || !req.query.sort_order) {
     return res.status(400).json({ message: "Missing query/sort parameters" })
   }
@@ -31,6 +29,12 @@ export const getAll = async (req: Request, res: Response) => {
   })
 
   queryBuilder.orderBy({ [`task.${sort_by}`]: sort_order })
+
+  if (req.query.expiry_date) {
+    queryBuilder.andWhere({
+      expiryDate: req.query.expiry_date,
+    })
+  }
 
   if (req.query.states) {
     queryBuilder.andWhere({

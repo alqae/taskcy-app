@@ -14,6 +14,7 @@ const ArchivePage = React.lazy(() => import('@/pages/Archive'));
 const ProfilePage = React.lazy(() => import('@/pages/Profile'));
 const TasksPage = React.lazy(() => import('@/pages/Tasks'));
 const LoginPage = React.lazy(() => import('@/pages/Login'));
+const SettingsPage = React.lazy(() => import('@/pages/Settings'));
 
 export const Router: React.FC = () => (
   <BrowserRouter>
@@ -25,6 +26,7 @@ export const Router: React.FC = () => (
           <Route path={Routes.ARCHIVE} element={<ArchivePage />} />
           <Route path={Routes.NOTIFICATIONS} element={<NotificationsPage />} />
           <Route path={Routes.PROFILE} element={<ProfilePage />} />
+          <Route path={Routes.SETTINGS} element={<SettingsPage />} />
         </Route>
 
         <Route element={<GuestLayout />}>

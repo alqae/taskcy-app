@@ -7,6 +7,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ListItemButton from '@mui/material/ListItemButton'
 import DashboardIcon from '@mui/icons-material/Dashboard'
+import SettingsIcon from '@mui/icons-material/Settings'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import ArchiveIcon from '@mui/icons-material/Archive'
@@ -89,7 +90,6 @@ export const Sidebar: React.FC<React.PropsWithChildren> = ({ children }) => {
   const path = useLocation()
   const navigate = useNavigate()
   const { logout, isLoading } = useAuth()
-
 
   const toggleDrawer = useCallback(() => setOpen((prev) => !prev), [])
 
@@ -191,6 +191,15 @@ export const Sidebar: React.FC<React.PropsWithChildren> = ({ children }) => {
                 <NotificationsIcon />
               </ListItemIcon>
               <ListItemText primary="Notifications" sx={ListItemTextProps} />
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton sx={ListItemButtonProps} selected={path.pathname === Routes.SETTINGS} onClick={() => navigate(Routes.SETTINGS)} disabled={isLoading}>
+              <ListItemIcon sx={ListItemIconProps}>
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary="Settings" sx={ListItemTextProps} />
             </ListItemButton>
           </ListItem>
 

@@ -1,4 +1,5 @@
 import { Request, Response } from "express"
+import { Like } from "typeorm"
 import z from "zod"
 
 import { CreateCategorySchema, UpdateCategorySchema } from "../schemas/category.schema"
@@ -6,9 +7,37 @@ import { AppDataSource } from "../data-source"
 import { Category } from "../entities/Category"
 import { User } from "../entities/User"
 
-export const getAll = async (_: Request, res: Response) => {
-  const categories = await AppDataSource.getRepository(Category).find()
-  return res.json(categories)
+export const getAll = async (req: Request, res: Response) => {
+  if (!req.query.take || !req.query.skip || !req.query.sort_by || !req.query.sort_order) {
+    return res.status(400).json({ message: "Missing query/sort parameters" })
+  }
+
+  const take = parseInt(req.query.take as string)
+  const skip = parseInt(req.query.skip as string)
+
+  const sort_by = req.query.sort_by as string
+  const sort_order = req.query.sort_order as "ASC" | "DESC"
+
+  const queryBuilder = AppDataSource.getRepository(Category).createQueryBuilder('category')
+
+  queryBuilder.leftJoinAndSelect("category.user", "user")
+
+  queryBuilder.orderBy({ [`category.${sort_by}`]: sort_order })
+
+  if (req.query.search) {
+    queryBuilder.andWhere({ name: Like(`%${req.query.search}%`) })
+  }
+
+  const categories = await queryBuilder.take(take).skip(skip).getMany()
+  const count = await queryBuilder.getCount()
+
+  const totalPages = Math.ceil(count / take)
+
+  return res.json({
+    hits: categories,
+    total: count,
+    totalPages,
+  })
 }
 
 export const getOptions = async (_: Request, res: Response) => {
