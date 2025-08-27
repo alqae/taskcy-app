@@ -11,3 +11,7 @@ export const CreateCategorySchema = CategorySchema.omit({ id: true }).meta({ id:
 
 export const UpdateCategorySchema = CategorySchema.omit({ id: true }).meta({ id: "UpdateCategory", description: "Update category schema" })
 
+export const ItemOptionSchema = z.object({
+  label: z.string().meta({ description: "Item option label" }),
+  value: z.string().meta({ description: "Item option value" }),
+}).meta({ id: "ItemOption", description: "Item option schema" })

@@ -11,6 +11,7 @@ export const TaskSchema = z.object({
   description: z.string().meta({ description: "Task description" }),
   state: z.enum(Object.values(TaskState)).default(TaskState.TODO).meta({ description: "Task state" }),
   priority: z.enum(Object.values(TaskPriority)).default(TaskPriority.LOW).meta({ description: "Task priority" }),
+  duration: z.string().meta({ description: "Task duration" }),
   expiryDate: z.string().default(new Date().toISOString()).meta({ description: "Task expiry date" }),
   categoryId: z.number().nullable().optional().meta({ description: "Category ID" }),
   tagIds: z.array(z.number()).optional().meta({ description: "Tag IDs" }),

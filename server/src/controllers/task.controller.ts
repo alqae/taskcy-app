@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { In } from "typeorm"
+import { FindManyOptions, In, Like } from "typeorm"
 import z from "zod"
 
 import { CreateTaskSchema, UpdateTaskSchema } from "../schemas"
@@ -10,25 +10,108 @@ import { User } from "../entities/User"
 import { Tag } from "../entities/Tag"
 
 export const getAll = async (req: Request, res: Response) => {
-  // TODO add state, expiry_date, priority, category_id, search (name, description), tags_ids, sort_by and sort_order
+  // TODO add state, expiry_date, priority, category_id, search (name, description), tags_ids
 
-  const tasks = await AppDataSource.getRepository(Task).find({
-    relations: {
-      category: true,
-      tags: true,
-    },
-    where: {
-      user: {
-        id: req.user.id
-      }
+  if (!req.query.take || !req.query.skip || !req.query.sort_by || !req.query.sort_order) {
+    return res.status(400).json({ message: "Missing query/sort parameters" })
+  }
+
+  const take = parseInt(req.query.take as string)
+  const skip = parseInt(req.query.skip as string)
+
+  const sort_by = req.query.sort_by as string
+  const sort_order = req.query.sort_order as "ASC" | "DESC"
+
+  const queryBuilder = AppDataSource.getRepository(Task).createQueryBuilder('task')
+
+  queryBuilder.leftJoinAndSelect("task.user", "user").where({
+    user: {
+      id: req.user.id
     }
   })
 
-  return res.json(tasks)
+  queryBuilder.orderBy({ [`task.${sort_by}`]: sort_order })
+
+  if (req.query.states) {
+    queryBuilder.andWhere({
+      state: In((req.query.states as string).split(','))
+    })
+  } else {
+    queryBuilder.andWhere({
+      state: In([TaskState.TODO, TaskState.IN_PROGRESS, TaskState.COMPLETED])
+    })
+  }
+
+  if (req.query.priorities) {
+    queryBuilder.andWhere({
+      priority: In((req.query.priorities as string).split(','))
+    })
+  }
+
+  if (req.query.category_id) {
+    queryBuilder.andWhere({
+      category: {
+        id: In((req.query.category_id as string).split(','))
+      }
+    })
+  }
+
+  if (req.query.tags_ids) {
+    const tagIds = (req.query.tags_ids as string).split(',');
+
+    queryBuilder.andWhere(
+      `EXISTS (
+        SELECT 1 FROM tasks_tags tt
+        WHERE tt.task_id = task.id
+        AND tt.tag_id IN (:...tagIds)
+      )`,
+      { tagIds }
+    );
+  }
+
+  if (req.query.search) {
+    queryBuilder.andWhere(
+      (qb) => {
+        const subQuery = qb.subQuery()
+          .select('task.id')
+          .from(Task, 'task')
+          .where('task.name LIKE :search OR task.description LIKE :search')
+          .getQuery();
+        return 'task.id IN ' + subQuery;
+      },
+      { search: `%${req.query.search}%` }
+    );
+  }
+
+  const tasks = await queryBuilder
+    .take(take)
+    .skip(skip)
+    .leftJoinAndSelect('task.category', 'category')
+    .leftJoinAndSelect('task.tags', 'tag')
+    .getMany()
+
+  const count = await queryBuilder.getCount()
+
+  const totalPages = Math.ceil(count / take)
+
+  return res.json({
+    hits: tasks,
+    total: count,
+    totalPages,
+  })
 }
 
 export const create = async (req: Request, res: Response) => {
-  const { name, description, categoryId, tagIds, state, priority, expiryDate } = req.body as z.infer<typeof CreateTaskSchema>
+  const {
+    name,
+    description,
+    categoryId,
+    tagIds,
+    state,
+    priority,
+    expiryDate,
+    duration
+  } = req.body as z.infer<typeof CreateTaskSchema>
 
   const tags = await AppDataSource.getRepository(Tag).find({
     where: {
@@ -64,6 +147,7 @@ export const create = async (req: Request, res: Response) => {
     state,
     priority,
     expiryDate,
+    duration,
     user: userLogged
   })
 
@@ -73,7 +157,16 @@ export const create = async (req: Request, res: Response) => {
 }
 
 export const update = async (req: Request, res: Response) => {
-  const { name, description, categoryId, tagIds, state, priority, expiryDate } = req.body as z.infer<typeof UpdateTaskSchema>
+  const {
+    name,
+    description,
+    categoryId,
+    tagIds,
+    state,
+    priority,
+    expiryDate,
+    duration
+  } = req.body as z.infer<typeof UpdateTaskSchema>
 
   const taskId = parseInt(req.params.id)
   const task = await AppDataSource.getRepository(Task).findOne({
@@ -111,6 +204,7 @@ export const update = async (req: Request, res: Response) => {
   task.state = state
   task.priority = priority
   task.expiryDate = new Date(expiryDate)
+  task.duration = duration
   task.category = category
   task.tags = tags
 

@@ -28,6 +28,26 @@ router.get("/", TagController.getAll)
 
 /**
  * @swagger
+ * /tags/options:
+ *   get:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tags]
+ *     summary: Get all tags for select options
+ *     responses:
+ *       200:
+ *         description: List of tags
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ItemOption'
+ */
+router.get("/options", TagController.getOptions)
+
+/**
+ * @swagger
  * /tags:
  *   post:
  *     security:

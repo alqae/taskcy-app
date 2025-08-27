@@ -11,6 +11,13 @@ export const getAll = async (_: Request, res: Response) => {
   return res.json(categories)
 }
 
+export const getOptions = async (_: Request, res: Response) => {
+  const categories = await AppDataSource.getRepository(Category).find({
+    select: ["id", "name"],
+  })
+  return res.json(categories.map((category) => ({ label: category.name, value: category.id })))
+}
+
 export const create = async (req: Request, res: Response) => {
   const body: z.infer<typeof CreateCategorySchema> = req.body
   const alreadyExists = await AppDataSource.getRepository(Category).findOne({

@@ -26,6 +26,26 @@ router.get("/", CategoryController.getAll)
 
 /**
  * @swagger
+ * /categories/options:
+ *   get:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Categories]
+ *     summary: Get all categories for select options
+ *     responses:
+ *       200:
+ *         description: List of categories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ItemOption'
+ */
+router.get("/options", CategoryController.getOptions)
+
+/**
+ * @swagger
  * /categories:
  *   post:
  *     security:

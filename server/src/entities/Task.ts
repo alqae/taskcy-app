@@ -27,6 +27,9 @@ export class Task {
     @Column()
     description: string
 
+    @Column()
+    duration: string
+
     @ManyToOne(() => Category, category => category.tasks, { onDelete: "SET NULL" })
     @JoinColumn({ name: "category_id" })
     category: Category

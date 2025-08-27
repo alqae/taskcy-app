@@ -11,6 +11,13 @@ export const getAll = async (_: Request, res: Response) => {
   return res.json(tags)
 }
 
+export const getOptions = async (_: Request, res: Response) => {
+  const tags = await AppDataSource.getRepository(Tag).find({
+    select: ["id", "name"],
+  })
+  return res.json(tags.map((tag) => ({ label: tag.name, value: tag.id })))
+}
+
 export const create = async (req: Request, res: Response) => {
   const body: z.infer<typeof CreateTagSchema> = req.body
   const alreadyExists = await AppDataSource.getRepository(Tag).findOne({
