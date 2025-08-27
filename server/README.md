@@ -63,6 +63,16 @@ You can find the database schema in the image below:
 
 ![Database Schema](./images/schema.png)
 
+## ⚠️ Migration errors
+
+If you encounter errors when running migrations, temporarily add the following line **inside `compilerOptions`** in your **tsconfig.json**:
+
+```json
+"types": ["node"]
+```
+
+After the migration has completed successfully, remove this line.
+
 ---
 
 ## 🚀 Getting Started
