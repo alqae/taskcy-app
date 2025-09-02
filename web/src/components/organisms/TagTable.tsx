@@ -13,7 +13,9 @@ import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules
 import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
 import type { Tag, PaginatedResponse } from '@types'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useModal } from '@/context/ModalContext'
 import { useApi } from '@/hooks/useApi'
+import { TagModal } from './TagModal'
 import { textOn } from '@/utils'
 
 export const TagTable: React.FC = () => {
@@ -76,6 +78,16 @@ export const TagTable: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, debouncedSearch])
 
+  const modal = useModal()
+
+  const onEdit = (tag: Tag) => {
+    modal.showModal(TagModal, {
+      title: 'Edit Tag',
+      description: 'Please fill in the form below to edit the tag.',
+      defaultValue: tag,
+    })
+  }
+
   return (
     <>
       <EnhancedTable
@@ -108,6 +120,7 @@ export const TagTable: React.FC = () => {
               key={row.id}
               selected={isItemSelected}
               sx={{ cursor: 'pointer' }}
+              onClick={() => onEdit(row)}
             >
               <TableCell padding="checkbox">
                 <Checkbox

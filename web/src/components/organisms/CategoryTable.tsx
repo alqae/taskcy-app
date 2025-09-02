@@ -12,7 +12,9 @@ import Chip from '@mui/material/Chip'
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
 import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
 import type { Category, PaginatedResponse } from '@types'
+import { useModal } from '@/context/ModalContext'
 import { useDebounce } from '@/hooks/useDebounce'
+import { CategoryModal } from './CategoryModal'
 import { useApi } from '@/hooks/useApi'
 import { textOn } from '@/utils'
 
@@ -76,6 +78,16 @@ export const CategoryTable: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, debouncedSearch])
 
+  const modal = useModal()
+
+  const onEdit = (category: Category) => {
+    modal.showModal(CategoryModal, {
+      title: 'Edit Category',
+      description: 'Please fill in the form below to edit the category.',
+      defaultValue: category,
+    })
+  }
+
   return (
     <>
       <EnhancedTable
@@ -108,6 +120,7 @@ export const CategoryTable: React.FC = () => {
               key={row.id}
               selected={isItemSelected}
               sx={{ cursor: 'pointer' }}
+              onClick={() => onEdit(row)}
             >
               <TableCell padding="checkbox">
                 <Checkbox
