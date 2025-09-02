@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 import { ThemeProvider } from '@emotion/react'
+import { SnackbarProvider } from 'notistack'
 import { CssBaseline } from '@mui/material'
 
 import RalewayMediumWoff2 from '@fonts/Raleway-Medium.woff2'
@@ -101,9 +102,11 @@ export const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline enableColorScheme />
-      <AuthProvider>
-        <Router />
-      </AuthProvider>
+      <SnackbarProvider>
+        <AuthProvider>
+          <Router />
+        </AuthProvider>
+      </SnackbarProvider>
     </ThemeProvider>
   )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 
 import { useAuth } from '@/context/AuthContext'
-import { ApiErrorResponse } from '@types'
+import { handleError } from '@/utils'
 
 type UseApiOptions<R> = {
   skip?: boolean
@@ -54,16 +54,15 @@ export const useApi = <T = unknown, R = unknown>(
         body: (options?.method || method) !== "GET" ? JSON.stringify(options?.body || body) : undefined,
       })
 
-      if (!res.ok) throw new Error(`Error ${res.status}`)
+      const json = await res.json()
 
-      const json = (await res.json()) as T
-      setData(json)
-    } catch (err: unknown) {
-      if (err instanceof Error || err instanceof ApiErrorResponse) {
-        setError(err.message)
-      } else {
-        setError("Something went wrong")
+      if (!res.ok) {
+        throw new Error(json?.message)
       }
+
+      setData(json as T)
+    } catch (error) {
+      setError(handleError(error))
     } finally {
       setIsLoading(false)
     }

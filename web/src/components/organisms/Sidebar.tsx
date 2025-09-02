@@ -93,18 +93,19 @@ export const Sidebar: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const toggleDrawer = useCallback(() => setOpen((prev) => !prev), [])
 
+  const handleLogout = useCallback(async () => {
+    await logout()
+    navigate(Routes.LOGIN)
+  }, [logout, navigate])
+
   const ListItemIconProps = [
     {
       minWidth: 0,
       justifyContent: 'center',
     },
-    open
-      ? {
-          mr: 3,
-        }
-      : {
-          mr: 'auto',
-        },
+    {
+      mr: open ? 3 : 'auto',
+    },
   ]
 
   const ListItemButtonProps = [
@@ -204,7 +205,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = ({ children }) => {
           </ListItem>
 
           <ListItem disablePadding sx={{ display: 'block' }}>
-            <ListItemButton sx={ListItemButtonProps} onClick={logout} disabled={isLoading}>
+            <ListItemButton sx={ListItemButtonProps} onClick={handleLogout} disabled={isLoading}>
               <ListItemIcon sx={ListItemIconProps}>
                 <LogoutIcon />
               </ListItemIcon>

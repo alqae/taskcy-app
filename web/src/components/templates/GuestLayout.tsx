@@ -8,6 +8,7 @@ import React from 'react'
 
 import { useAuth } from '@/context/AuthContext'
 import SiteIcon from '@/assets/images/Logo.svg'
+import { Routes } from '@types'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -55,7 +56,7 @@ export const GuestLayout: React.FC = () => {
   const { isLoggedIn } = useAuth()
 
   if (isLoggedIn) {
-    return <Navigate to="/" />
+    return <Navigate to={Routes.DASHBOARD} />
   }
 
   return (

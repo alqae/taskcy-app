@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { FindManyOptions, In, Like } from "typeorm"
+import { In } from "typeorm"
 import z from "zod"
 
 import { CreateTaskSchema, UpdateTaskSchema } from "../schemas"
