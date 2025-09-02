@@ -1,13 +1,14 @@
 import { createTheme } from '@mui/material/styles'
 import { ThemeProvider } from '@emotion/react'
 import { SnackbarProvider } from 'notistack'
-import { CssBaseline } from '@mui/material'
+import { CssBaseline, Fade } from '@mui/material'
 
 import RalewayMediumWoff2 from '@fonts/Raleway-Medium.woff2'
 import RalewayRegWoff2 from '@fonts/Raleway-Regular.woff2'
 import RalewayBoldWoff2 from '@fonts/Raleway-Bold.woff2'
 import RalewayThinWoff2 from '@fonts/Raleway-Thin.woff2'
 
+import { ModalProvider } from './context/ModalContext'
 import { AuthProvider } from './context/AuthContext'
 import { Router } from './Router'
 
@@ -95,18 +96,26 @@ const theme = createTheme({
         }
       `,
     },
+    MuiDialog: {
+      defaultProps: {
+        TransitionComponent: Fade,
+        TransitionProps: {
+          timeout: 400 // FYI: This is the same as the timeout set in ModalContext
+        }
+      }
+    }
   },
 })
 
-export const App = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline enableColorScheme />
+export const App = () => (
+  <ThemeProvider theme={theme}>
+    <CssBaseline enableColorScheme />
+    <ModalProvider>
       <SnackbarProvider>
         <AuthProvider>
           <Router />
         </AuthProvider>
       </SnackbarProvider>
-    </ThemeProvider>
-  )
-}
+    </ModalProvider>
+  </ThemeProvider>
+)
