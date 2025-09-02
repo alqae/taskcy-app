@@ -1,6 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { useSnackbar } from 'notistack'
 
 import { User, type LoginRequest, type RegisterRequest } from '@types'
+import { getCookie, handleError } from '@/utils'
 
 type AuthContextType = {
   user?: User
@@ -16,11 +18,20 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { enqueueSnackbar } = useSnackbar()
+
   const API_URL = import.meta.env.VITE_API_URL
   const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState<User>(
-    // new User( 1, 'John', 'Doe', 'john.doe@example.com', 0)
+    // new User( 1, 'John', 'Doe', 'john.doe@example.com', 0) // FYI: This is just for testing
   )
+
+  const getAccessToken = useCallback(() => {
+    const item = localStorage.getItem('access_token')
+    return item ? item : null
+  }, [])
+
+  const [isLoggedIn, setIsLoggedIn] = useState(() => getAccessToken() !== null)
 
   const login = async (newUser: LoginRequest) => {
     setIsLoading(true)
@@ -37,7 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const data = await response.json()
       if (!response.ok) {
-        throw new Error(data)
+        throw new Error(data?.message)
       }
 
       const accessToken = response.headers.get('Authorization')
@@ -48,34 +59,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setUser(data)
+      setIsLoggedIn(true)
+      enqueueSnackbar('Welcome back!', { variant: 'success' })
     } catch (error) {
-      return Promise.reject(error)
+      handleError(error)
     } finally {
       setIsLoading(false)
     }
   }
-
-  const logout = useCallback(async () => {
-    try {
-      setIsLoading(true)
-
-      const response = await fetch(`${API_URL}/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      })
-
-      if (!response.ok) {
-        throw new Error('Logout request failed')
-      }
-    } catch (error) {
-      // TODO: Show error message
-      return Promise.reject(error)
-    } finally {
-      setUser(undefined)
-      setIsLoading(false)
-      localStorage.removeItem('access_token')
-    }
-  }, [API_URL])
 
   const register = async (newUser: RegisterRequest) => {
     setIsLoading(true)
@@ -103,16 +94,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setUser(data)
     } catch (error) {
-      return Promise.reject(error)
+      handleError(error)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const refreshToken = useCallback(async () => {
-    setIsLoading(true)
-
+  const logout = useCallback(async () => {
     try {
+      setIsLoggedIn(false)
+      setIsLoading(true)
+
+      const accessToken = getAccessToken()
+      const response = await fetch(`${API_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      if (!response.ok) throw new Error('Logout request failed')
+    } finally {
+      setUser(undefined)
+      setIsLoading(false)
+      localStorage.removeItem('access_token')
+    }
+  }, [API_URL, getAccessToken])
+
+  const refreshToken = useCallback(async () => {
+    try {
+      const jid = getCookie('jid')
+      if (!jid) throw new Error('Your session has expired, please login again')
+
+      setIsLoading(true)
+
       const response = await fetch(`${API_URL}/auth/refresh-token`, {
         method: 'POST',
         credentials: 'include',
@@ -122,9 +139,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       })
 
       const data = await response.json()
-      if (!response.ok) {
-        throw new Error(data)
-      }
+      if (!response.ok) throw new Error(data?.message || 'Something went wrong')
 
       const accessToken = response.headers.get('Authorization')
       if (accessToken) {
@@ -135,29 +150,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setUser(data)
     } catch (error) {
+      handleError(error)
       logout()
-      return Promise.reject(error)
     } finally {
       setIsLoading(false)
     }
   }, [API_URL, logout])
 
-  const getAccessToken = useCallback(() => {
-    const item = localStorage.getItem('access_token')
-    return item ? item : null
-  }, [])
+  const fetchProfile = useCallback(async () => {
+    setIsLoading(true)
+
+    try {
+      const accessToken = getAccessToken()
+      const response = await fetch(`${API_URL}/auth/profile`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+
+      const data = await response.json()
+      if (!response.ok) throw new Error(data?.message || 'Something went wrong')
+      setUser(data)
+    } catch {
+      refreshToken()
+    } finally {
+      setIsLoading(false)
+    }
+  }, [API_URL, refreshToken, getAccessToken])
 
   useEffect(() => {
-    const accessToken = getAccessToken()
-    if (accessToken) {
-      refreshToken()
+    if (isLoggedIn && !user) {
+      fetchProfile()
     }
-  }, [getAccessToken, refreshToken])
+  }, [isLoggedIn, user, fetchProfile])
 
   return (
     <AuthContext.Provider value={{
       user,
-      isLoggedIn: Boolean(user),
+      isLoggedIn,
       isLoading,
       login,
       logout,
