@@ -85,7 +85,7 @@ export const ExpiredTasksTable: React.FC = () => {
         const labelId = `expired-tasks-table-checkbox-${row.id}`
 
         return (
-          <TableRow sx={{ cursor: 'pointer' }}>
+          <TableRow sx={{ cursor: 'pointer' }} key={row.id}>
             <TableCell padding="checkbox">
               <Checkbox
                 name={labelId}

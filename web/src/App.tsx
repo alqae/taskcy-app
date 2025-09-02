@@ -11,27 +11,27 @@ import RalewayThinWoff2 from '@fonts/Raleway-Thin.woff2'
 import { AuthProvider } from './context/AuthContext'
 import { Router } from './Router'
 
-const getDesignTokens = (mode: "light" | "dark") => ({
+const getDesignTokens = (mode: 'light' | 'dark') => ({
   palette: {
     mode,
     primary: {
-      main: "#724C7D",
+      main: '#724C7D',
     },
     secondary: {
-      main: "#CFDEDB",
+      main: '#CFDEDB',
     },
     background: {
-      default: mode === "light" ? "#F5F5F5" : "#212121",
-      paper: mode === "light" ? "#FFFFFF" : "#2C2C2C",
+      default: mode === 'light' ? '#F5F5F5' : '#212121',
+      paper: mode === 'light' ? '#FFFFFF' : '#2C2C2C',
     },
     custom: {
-      cardGreen: "#CFDEDB",
-      cardGray: "#E9E9E9",
-      cardPurple: "#724C7D",
+      cardGreen: '#CFDEDB',
+      cardGray: '#E9E9E9',
+      cardPurple: '#724C7D',
     },
     text: {
-      primary: mode === "light" ? "#111111" : "#FFFFFF",
-      secondary: mode === "light" ? "#555555" : "#B0B0B0",
+      primary: mode === 'light' ? '#111111' : '#FFFFFF',
+      secondary: mode === 'light' ? '#555555' : '#B0B0B0',
     },
   },
 })

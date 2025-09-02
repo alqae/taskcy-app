@@ -56,6 +56,7 @@ export const EnhancedTableHead = <T,>({ onSelectAllClick, order, orderBy, numSel
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
+              name: 'select-all',
               'aria-label': 'select all desserts',
             }}
           />

@@ -1,14 +1,16 @@
-export const textOn = (hex: string): "#000000" | "#FFFFFF" => {
-  const clean = hex.replace(/^#/, "").toLowerCase()
+import { enqueueSnackbar } from 'notistack'
+
+export const textOn = (hex: string): '#000000' | '#FFFFFF' => {
+  const clean = hex.replace(/^#/, '').toLowerCase()
 
   const expand = (s: string) =>
     s.length === 3 || s.length === 4
-      ? s.split("").map(c => c + c).join("")
+      ? s.split('').map(c => c + c).join('')
       : s
 
   const h = expand(clean)
   if (![6, 8].includes(h.length)) {
-    return "#000000"
+    return '#000000'
   }
 
   const r = parseInt(h.slice(0, 2), 16)
@@ -36,7 +38,7 @@ export const textOn = (hex: string): "#000000" | "#FFFFFF" => {
   const cBlack = contrast(L, blackL)
   const cWhite = contrast(L, whiteL)
 
-  return cBlack >= cWhite ? "#000000" : "#FFFFFF"
+  return cBlack >= cWhite ? '#000000' : '#FFFFFF'
 }
 
 export const handleError = (error: unknown): string => {
