@@ -1,16 +1,16 @@
 import React, { createContext, useContext, useState } from 'react'
 
 export type ModalOptions = {
-  onSubmit?: () => void;
-  onClose?: () => void;
-};
+  onClose?: () => void
+  isClosing?: boolean
+}
 
 
 type ModalData<T extends React.ElementType> = {
-  component: T;
-  props?: React.ComponentProps<T>;
-  options?: ModalOptions;
-};
+  component: T
+  props?: React.ComponentProps<T>
+  options?: ModalOptions
+}
 
 
 type ModalContextType = {
@@ -18,9 +18,9 @@ type ModalContextType = {
     component: ModalData<T>['component'],
     props?: ModalData<T>['props'],
     options?: ModalData<T>['options']
-  ) => void;
-  hideModal: () => void;
-};
+  ) => void
+  hideModal: () => void
+}
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined)
 
@@ -61,7 +61,6 @@ export const ModalProvider: React.FC<React.PropsWithChildren> = ({ children }) =
       <ModalComponent
         {...modal?.props}
         {...(modal ? {
-          onSubmit: modal?.options?.onSubmit,
           isClosing: isClosing,
           onClose: hideModal,
         } : {})}
