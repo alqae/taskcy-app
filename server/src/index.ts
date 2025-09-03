@@ -40,7 +40,7 @@ import { z } from "zod"
   // CORS
   app.use(cors({
     credentials: true,
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://taskcy.online"],
     exposedHeaders: ["Authorization"],
   }))
   // Body parser
