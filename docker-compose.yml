@@ -6,6 +6,7 @@ services:
       - "80:80"
     restart: unless-stopped
     volumes:
+      - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
       - /etc/letsencrypt:/etc/letsencrypt
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf
       - ./proxy/ssl.conf:/etc/nginx/ssl.conf
