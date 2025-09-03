@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Response } from "express"
 import { In } from "typeorm"
 import z from "zod"
 
@@ -8,8 +8,9 @@ import { AppDataSource } from "../data-source"
 import { Category } from "../entities/Category"
 import { User } from "../entities/User"
 import { Tag } from "../entities/Tag"
+import { IRequest } from "../types"
 
-export const getAll = async (req: Request, res: Response) => {
+export const getAll = async (req: IRequest, res: Response) => {
   if (!req.query.take || !req.query.skip || !req.query.sort_by || !req.query.sort_order) {
     return res.status(400).json({ message: "Missing query/sort parameters" })
   }
@@ -105,7 +106,7 @@ export const getAll = async (req: Request, res: Response) => {
   })
 }
 
-export const create = async (req: Request, res: Response) => {
+export const create = async (req: IRequest, res: Response) => {
   const {
     name,
     description,
@@ -160,7 +161,7 @@ export const create = async (req: Request, res: Response) => {
   return res.json(task)
 }
 
-export const update = async (req: Request, res: Response) => {
+export const update = async (req: IRequest, res: Response) => {
   const {
     name,
     description,
@@ -216,7 +217,7 @@ export const update = async (req: Request, res: Response) => {
   return res.json(task)
 }
 
-export const remove = async (req: Request, res: Response) => {
+export const remove = async (req: IRequest, res: Response) => {
   const taskId = parseInt(req.params.id)
   const task = await AppDataSource.getRepository(Task).findOne({
     where: {
@@ -233,7 +234,7 @@ export const remove = async (req: Request, res: Response) => {
   return res.status(204).json()
 }
 
-export const toggleComplete = async (req: Request, res: Response) => {
+export const toggleComplete = async (req: IRequest, res: Response) => {
   const taskId = parseInt(req.params.id)
   const task = await AppDataSource.getRepository(Task).findOne({
     where: {

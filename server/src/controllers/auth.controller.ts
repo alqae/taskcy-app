@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Response } from "express"
 import bcrypt from "bcrypt"
 import z from "zod"
 
@@ -6,8 +6,9 @@ import { createAccessToken, createRefreshToken, decodeToken, sendRefreshToken } 
 import { LoginSchema, RegisterSchema } from "../schemas/auth.schemas"
 import { User, UserPayload } from "../entities/User"
 import { AppDataSource } from "../data-source"
+import { IRequest } from "../types"
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: IRequest, res: Response) => {
   const body: z.infer<typeof LoginSchema> = req.body
 
   const user = await AppDataSource.getRepository(User).findOne({
@@ -35,7 +36,7 @@ export const login = async (req: Request, res: Response) => {
   return res.json(user)
 }
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: IRequest, res: Response) => {
   const body: z.infer<typeof RegisterSchema> = req.body
 
   const user = await AppDataSource.getRepository(User).findOne({
@@ -61,7 +62,7 @@ export const register = async (req: Request, res: Response) => {
   return res.status(201).json(newUser)
 }
 
-export const logout = async (req: Request, res: Response) => {
+export const logout = async (req: IRequest, res: Response) => {
   const userLogged = await AppDataSource.getRepository(User).findOne({
     where: { id: req.user.id },
   })
@@ -77,7 +78,7 @@ export const logout = async (req: Request, res: Response) => {
   return res.json({ message: "Logout successful" })
 }
 
-export const getProfile = async (req: Request, res: Response) => {
+export const getProfile = async (req: IRequest, res: Response) => {
   const user = await AppDataSource.getRepository(User).findOne({
     where: { id: req.user.id },
   })
@@ -89,7 +90,7 @@ export const getProfile = async (req: Request, res: Response) => {
   return res.json(user)
 }
 
-export const refreshToken = async (req: Request, res: Response) => {
+export const refreshToken = async (req: IRequest, res: Response) => {
   const token = req.cookies.jid
 
   if (!token) {

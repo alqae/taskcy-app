@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Response } from "express"
 import { Like } from "typeorm"
 import z from "zod"
 
@@ -6,8 +6,9 @@ import { CreateCategorySchema, UpdateCategorySchema } from "../schemas/category.
 import { AppDataSource } from "../data-source"
 import { Category } from "../entities/Category"
 import { User } from "../entities/User"
+import { IRequest } from "../types"
 
-export const getAll = async (req: Request, res: Response) => {
+export const getAll = async (req: IRequest, res: Response) => {
   if (!req.query.take || !req.query.skip || !req.query.sort_by || !req.query.sort_order) {
     return res.status(400).json({ message: "Missing query/sort parameters" })
   }
@@ -40,14 +41,14 @@ export const getAll = async (req: Request, res: Response) => {
   })
 }
 
-export const getOptions = async (_: Request, res: Response) => {
+export const getOptions = async (_: IRequest, res: Response) => {
   const categories = await AppDataSource.getRepository(Category).find({
     select: ["id", "name"],
   })
   return res.json(categories.map((category) => ({ label: category.name, value: category.id.toString() })))
 }
 
-export const create = async (req: Request, res: Response) => {
+export const create = async (req: IRequest, res: Response) => {
   const body: z.infer<typeof CreateCategorySchema> = req.body
   const alreadyExists = await AppDataSource.getRepository(Category).findOne({
     where: { name: body.name },
@@ -70,7 +71,7 @@ export const create = async (req: Request, res: Response) => {
   return res.status(201).json(category)
 }
 
-export const update = async (req: Request, res: Response) => {
+export const update = async (req: IRequest, res: Response) => {
   const categoryId = parseInt(req.params.id)
   const category = await AppDataSource.getRepository(Category).findOne({
     where: { id: categoryId },
@@ -86,7 +87,7 @@ export const update = async (req: Request, res: Response) => {
   return res.status(204).json()
 }
 
-export const remove = async (req: Request, res: Response) => {
+export const remove = async (req: IRequest, res: Response) => {
   const categoryId = parseInt(req.params.id)
   const category = await AppDataSource.getRepository(Category).findOne({
     where: { id: categoryId },

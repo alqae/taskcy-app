@@ -1,4 +1,4 @@
-import { Request, Response } from "express"
+import { Response } from "express"
 import { Like } from "typeorm"
 import z from "zod"
 
@@ -6,8 +6,9 @@ import { CreateTagSchema } from "../schemas/tag.schema"
 import { AppDataSource } from "../data-source"
 import { User } from "../entities/User"
 import { Tag } from "../entities/Tag"
+import { IRequest } from "../types"
 
-export const getAll = async (req: Request, res: Response) => {
+export const getAll = async (req: IRequest, res: Response) => {
   if (!req.query.take || !req.query.skip || !req.query.sort_by || !req.query.sort_order) {
     return res.status(400).json({ message: "Missing query/sort parameters" })
   }
@@ -40,14 +41,14 @@ export const getAll = async (req: Request, res: Response) => {
   })
 }
 
-export const getOptions = async (_: Request, res: Response) => {
+export const getOptions = async (_: IRequest, res: Response) => {
   const tags = await AppDataSource.getRepository(Tag).find({
     select: ["id", "name"],
   })
   return res.json(tags.map((tag) => ({ label: tag.name, value: tag.id.toString() })))
 }
 
-export const create = async (req: Request, res: Response) => {
+export const create = async (req: IRequest, res: Response) => {
   const body: z.infer<typeof CreateTagSchema> = req.body
   const alreadyExists = await AppDataSource.getRepository(Tag).findOne({
     where: { name: body.name },

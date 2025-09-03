@@ -1,9 +1,10 @@
-import { NextFunction, Request, Response } from "express"
+import { NextFunction, Response } from "express"
 
 import { UserPayload } from "../entities/User"
 import { decodeToken } from "../utils/auth"
+import { IRequest } from "../types"
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: IRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization
 
   if (!authHeader) {
