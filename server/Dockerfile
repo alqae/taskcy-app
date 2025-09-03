@@ -1,7 +1,7 @@
 FROM node:20 AS build
 WORKDIR /app
-COPY package.json ./
-RUN yarn install --frozen-lockfile
+COPY package.json yarn.lock ./
+RUN yarn install
 COPY . .
 
 EXPOSE 3000
