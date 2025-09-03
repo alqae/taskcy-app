@@ -10,6 +10,8 @@ jobs:
     runs-on: [self-hosted]
     env:
       PORT: ${{ vars.PORT }}
+      API_URL: ${{ vars.API_URL }}
+      WEB_URL: ${{ vars.WEB_URL }}
       # DB_NAME: ${{ vars.DB_NAME }}
       # DB_PASS: ${{ secrets.DB_PASS }}
       # DB_USER: ${{ secrets.DB_USER }}
@@ -19,8 +21,6 @@ jobs:
       # SMTP_PORT: ${{ vars.SMTP_PORT }}
       # SMTP_USER: ${{ secrets.SMTP_USER }}
       # SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-      # WEB_URL: ${{ vars.WEB_URL }}
-      # API_URL: ${{ vars.API_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
