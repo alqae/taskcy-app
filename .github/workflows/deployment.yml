@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: [self-hosted]
+    environment: ${{ github.ref_name }}
     env:
       PORT: ${{ vars.PORT }}
       API_URL: ${{ vars.API_URL }}
@@ -16,10 +17,6 @@ jobs:
       DB_PASS: ${{ secrets.DB_PASS }}
       DB_NAME: ${{ vars.DB_NAME }}
       DB_PORT: ${{ vars.DB_PORT }}
-      # SMTP_HOST: ${{ vars.SMTP_HOST }}
-      # SMTP_PORT: ${{ vars.SMTP_PORT }}
-      # SMTP_USER: ${{ secrets.SMTP_USER }}
-      # SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
