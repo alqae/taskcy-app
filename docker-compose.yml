@@ -5,6 +5,11 @@ services:
     ports:
       - "80:80"
     restart: unless-stopped
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./proxy/ssl.conf:/etc/nginx/ssl.conf
+      - ./proxy/conf.d:/etc/nginx/conf.d
     networks:
       - taskcy_app_proxy
 
@@ -50,6 +55,17 @@ services:
     restart: unless-stopped
     networks:
       - taskcy_app_be
+
+
+  adminer:
+    image: adminer:5.2.1-standalone
+    container_name: taskcy-adminer
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - taskcy_app_be
+      - taskcy_app_proxy
 
 volumes:
   db_data:
