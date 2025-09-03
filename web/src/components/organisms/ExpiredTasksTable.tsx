@@ -59,6 +59,7 @@ export const ExpiredTasksTable: React.FC = () => {
   const [orderBy, setOrderBy] = useState<keyof Task>('name')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -121,6 +122,9 @@ export const ExpiredTasksTable: React.FC = () => {
         setOrderBy(orderBy)
         setOrder(order)
       }}
+      onActionClick={() => { }}
+      selectedIds={selectedIds}
+      onSelectedIdsChange={setSelectedIds}
     />
   )
 }

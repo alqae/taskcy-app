@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import DownloadIcon from '@mui/icons-material/Download'
+import ArchiveIcon from '@mui/icons-material/Archive'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
@@ -13,10 +14,10 @@ import Chip from '@mui/material/Chip'
 import type { Moment } from 'moment'
 import Fab from '@mui/material/Fab'
 
-import { type PaginatedResponse, type Task, TaskPriority, TaskState } from '@types'
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
+import { type PaginatedResponse, type Task, TaskPriority, TaskState } from '@types'
+import { TaskFilters } from '@/components/molecules/TaskFilters'
 import { TaskModal } from '@/components/organisms/TaskModal'
-import { TaskFilters } from '../molecules/TaskFilters'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useApi } from '@/hooks/useApi'
 import { textOn } from '@/utils'
@@ -63,6 +64,8 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
   const [selectedStates, setSelectedStates] = useState<TaskState[]>(allowedStates)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
 
   const debouncedSearch = useDebounce(search, 800)
 
@@ -163,6 +166,8 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
     <>
       <EnhancedTable
         dense
+        selectedIds={selectedIds}
+        onSelectedIdsChange={setSelectedIds}
         isLoading={isLoading}
         headCells={headCells}
         rows={data.hits}
@@ -267,6 +272,11 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
           refetch()
         }}
         onRefresh={refetch}
+        actionIcon={ArchiveIcon}
+        onActionClick={() => {
+          console.log(selectedIds)
+          setSelectedIds([])
+        }}
       />
 
       {showAddModal && (

@@ -23,6 +23,7 @@ export const CategoryTable: React.FC = () => {
   const [orderBy, setOrderBy] = useState<keyof Category>('name')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
 
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 800)
@@ -155,6 +156,9 @@ export const CategoryTable: React.FC = () => {
           refetch()
         }}
         onRefresh={refetch}
+        onActionClick={() => { }}
+        selectedIds={selectedIds}
+        onSelectedIdsChange={setSelectedIds}
       />
     </>
   )

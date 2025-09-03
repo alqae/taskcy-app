@@ -10,6 +10,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Checkbox from '@mui/material/Checkbox'
+import Skeleton from '@mui/material/Skeleton'
 import { alpha } from '@mui/material/styles'
 import { visuallyHidden } from '@mui/utils'
 import Toolbar from '@mui/material/Toolbar'
@@ -18,7 +19,6 @@ import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import React, { useMemo } from 'react'
 import Box from '@mui/material/Box'
-import { Skeleton } from '@mui/material'
 
 import { EmptyState } from './EmptyState'
 
@@ -91,9 +91,17 @@ export interface EnhancedTableToolbarProps {
   numSelected: number
   title?: string
   filters?: React.ReactNode
+  actionIcon?: React.ElementType
+  onActionClick: () => void
 }
 
-export const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected, title, filters }) => (
+export const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({
+  numSelected,
+  title,
+  filters,
+  actionIcon: ActionIcon = DeleteIcon,
+  onActionClick,
+}) => (
   <Toolbar
     sx={[
       {
@@ -128,8 +136,8 @@ export const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numS
 
     {numSelected > 0 ? (
       <Tooltip title="Delete">
-        <IconButton>
-          <DeleteIcon />
+        <IconButton onClick={onActionClick}>
+          <ActionIcon />
         </IconButton>
       </Tooltip>
     ) : filters }
@@ -142,7 +150,6 @@ export interface EnhancedTableProps<T> {
   renderRow: (row: T, index: number, handleClick: (id: number) => void, isSelected: boolean) => React.ReactNode
   dense?: boolean
   title?: string
-  filters?: React.ReactNode
   onSortChange: (orderBy: keyof T, order: Order) => void
   sort: { orderBy: keyof T, order: Order }
   pagination: { page: number, rowsPerPage: number }
@@ -150,6 +157,15 @@ export interface EnhancedTableProps<T> {
   isLoading?: boolean
   error?: string
   onRefresh?: () => void
+
+  // EnhancedTableToolbar props
+  filters?: EnhancedTableToolbarProps['filters']
+  actionIcon?: EnhancedTableToolbarProps['actionIcon']
+  onActionClick: (selectedIds: number[]) => void
+
+  // EnhancedTable props
+  selectedIds: number[]
+  onSelectedIdsChange: (selectedIds: number[]) => void
 }
 
 export const EnhancedTable = <T extends { id: number }>({
@@ -158,7 +174,6 @@ export const EnhancedTable = <T extends { id: number }>({
   renderRow,
   dense = false,
   title,
-  filters,
   onSortChange,
   onPaginationChange,
   sort,
@@ -166,9 +181,14 @@ export const EnhancedTable = <T extends { id: number }>({
   isLoading,
   error,
   onRefresh,
+  // EnhancedTableToolbar props
+  filters,
+  actionIcon,
+  onActionClick,
+  // EnhancedTable props
+  selectedIds,
+  onSelectedIdsChange,
 }: EnhancedTableProps<T>) => {
-  const [selected, setSelected] = React.useState<readonly number[]>([])
-
   const handleRequestSort = (_: React.MouseEvent<unknown>, property: keyof T) => {
     const isAsc = sort.orderBy === property && sort.order === 'asc'
     onSortChange(property, isAsc ? 'desc' : 'asc')
@@ -177,29 +197,29 @@ export const EnhancedTable = <T extends { id: number }>({
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.id)
-      setSelected(newSelected)
-      return
+      onSelectedIdsChange(newSelected)
+    } else {
+      onSelectedIdsChange([])
     }
-    setSelected([])
   }
 
   const handleClick = (id: number) => {
-    const selectedIndex = selected.indexOf(id)
-    let newSelected: readonly number[] = []
+    const selectedIndex = selectedIds.indexOf(id)
+    let newSelected: number[] = []
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id)
+      newSelected = newSelected.concat(selectedIds, id)
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1))
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1))
+      newSelected = newSelected.concat(selectedIds.slice(1))
+    } else if (selectedIndex === selectedIds.length - 1) {
+      newSelected = newSelected.concat(selectedIds.slice(0, -1))
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selectedIds.slice(0, selectedIndex),
+        selectedIds.slice(selectedIndex + 1),
       )
     }
-    setSelected(newSelected)
+    onSelectedIdsChange(newSelected)
   }
 
   const handleChangePage = (_: unknown, newPage: number) => {
@@ -217,12 +237,18 @@ export const EnhancedTable = <T extends { id: number }>({
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} title={title} filters={filters} />
+        <EnhancedTableToolbar
+          numSelected={selectedIds.length}
+          title={title}
+          filters={filters}
+          actionIcon={actionIcon}
+          onActionClick={() => onActionClick(selectedIds)}
+        />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
             <EnhancedTableHead
               headCells={headCells}
-              numSelected={selected.length}
+              numSelected={selectedIds.length}
               order={sort.order}
               orderBy={sort.orderBy}
               onSelectAllClick={handleSelectAllClick}
@@ -241,7 +267,7 @@ export const EnhancedTable = <T extends { id: number }>({
                   </TableRow>
                 ))
               ) : (
-                rows.map((row, index) => renderRow(row, index, handleClick, selected.includes(row.id)))
+                rows.map((row, index) => renderRow(row, index, handleClick, selectedIds.includes(row.id)))
               )}
 
               {error ? (

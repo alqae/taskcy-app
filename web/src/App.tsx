@@ -96,6 +96,11 @@ const theme = createTheme({
         }
       `,
     },
+    MuiTextField: {
+      defaultProps: {
+        variant: 'outlined',
+      },
+    },
     MuiDialog: {
       defaultProps: {
         TransitionComponent: Fade,

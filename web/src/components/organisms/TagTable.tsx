@@ -23,6 +23,7 @@ export const TagTable: React.FC = () => {
   const [orderBy, setOrderBy] = useState<keyof Tag>('name')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
 
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 800)
@@ -154,6 +155,9 @@ export const TagTable: React.FC = () => {
           setOrder(order)
           refetch()
         }}
+        onActionClick={() => { }}
+        selectedIds={selectedIds}
+        onSelectedIdsChange={setSelectedIds}
         onRefresh={refetch}
       />
     </>
