@@ -17,6 +17,8 @@ jobs:
       DB_PASS: ${{ secrets.DB_PASS }}
       DB_NAME: ${{ vars.DB_NAME }}
       DB_PORT: ${{ vars.DB_PORT }}
+      ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+      REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
