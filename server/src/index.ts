@@ -103,6 +103,9 @@ import { z } from "zod"
     apis: [path.join(__dirname, "routes", "*.routes.ts")]
   }
 
+  // ========= Proxy =========
+  app.set("trust proxy", true)
+
   const swaggerSpec = swaggerJSDoc(swaggerOptions)
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
