@@ -14,8 +14,6 @@ services:
       dockerfile: Dockerfile
     container_name: taskcy-fe
     image: taskcy-fe
-    ports:
-      - "80:80"
     restart: unless-stopped
     networks:
       - taskcy_app_proxy
