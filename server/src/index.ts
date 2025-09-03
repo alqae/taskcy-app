@@ -31,6 +31,7 @@ import { z } from "zod"
   // ========= Config =========
   const PORT = process.env.PORT || 3000
   const app = express()
+  app.set("trust proxy", true)
   // Transform response (class-transformer)
   app.use(transformResponse)
   // Helmet
@@ -102,9 +103,6 @@ import { z } from "zod"
     },
     apis: [path.join(__dirname, "routes", "*.routes.ts")]
   }
-
-  // ========= Proxy =========
-  app.set("trust proxy", true)
 
   const swaggerSpec = swaggerJSDoc(swaggerOptions)
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
