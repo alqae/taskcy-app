@@ -49,8 +49,8 @@ services:
     networks:
       - taskcy_app_be
       - taskcy_app_proxy
-    command: |
-      yarn run migration:run && yarn start
+    command: >
+      sh -c "yarn run migration:run && yarn start"
 
   db:
     image: postgres:15
