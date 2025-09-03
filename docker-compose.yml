@@ -1,4 +1,13 @@
 services:
+  proxy:
+    image: nginx:alpine
+    container_name: taskcy-proxy
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - taskcy_app_proxy
+
   web:
     build:
       context: ./web
