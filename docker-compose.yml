@@ -3,7 +3,7 @@ services:
     image: nginx:alpine
     container_name: taskcy-proxy
     ports:
-      - "80:80"
+      - "443:443"
     restart: unless-stopped
     volumes:
       - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
