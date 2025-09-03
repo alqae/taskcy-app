@@ -93,6 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setUser(data)
+      setIsLoggedIn(true)
     } catch (error) {
       handleError(error)
     } finally {
