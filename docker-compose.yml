@@ -19,6 +19,8 @@ services:
     restart: unless-stopped
     networks:
       - taskcy_app_proxy
+    depends_on:
+      - api
 
   api:
     build:

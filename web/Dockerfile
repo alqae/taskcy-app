@@ -1,6 +1,5 @@
 FROM node:22.14-alpine AS builder
 
-ENV NODE_ENV=production
 ENV API_URL=https://taskcy.online/api
 ENV APP_URL=https://taskcy.online
 
