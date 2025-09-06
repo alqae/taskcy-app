@@ -7,7 +7,8 @@ import Stack from '@mui/material/Stack'
 import * as yup from 'yup'
 import React from 'react'
 
-import { useAuth } from '@/context/AuthContext'
+import { getUserLogged } from '@store/reducers/authSlice'
+import { useAppSelector } from '@store/store'
 
 const schema = yup.object().shape({
   firstName: yup.string()
@@ -20,14 +21,14 @@ const schema = yup.object().shape({
 })
 
 export const UpdateBasicInformation: React.FC = () => {
-  const { user } = useAuth()
+  const userLogged = useAppSelector(getUserLogged)
 
   const form = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      email: user?.email || '',
+      firstName: userLogged?.firstName || '',
+      lastName: userLogged?.lastName || '',
+      email: userLogged?.email || '',
     },
   })
 

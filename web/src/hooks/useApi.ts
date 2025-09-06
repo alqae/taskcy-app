@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
 
-import { useAuth } from '@/context/AuthContext'
 import { handleError } from '@/utils'
 
 type UseApiOptions<R> = {
@@ -22,7 +21,10 @@ export const useApi = <T = unknown, R = unknown>(
   endpoint: string,
   { skip = false, method = "GET", body, headers, query }: UseApiOptions<R> = {}
 ): ApiState<T, R> => {
-  const { getAccessToken } = useAuth()
+  const getAccessToken = useCallback(() => {
+    const item = localStorage.getItem('access_token')
+    return item ? item : null
+  }, [])
 
   const [data, setData] = useState<T>()
   const [error, setError] = useState<string>()

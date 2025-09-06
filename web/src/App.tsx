@@ -11,7 +11,6 @@ import RalewayBoldWoff2 from '@fonts/Raleway-Bold.woff2'
 import RalewayThinWoff2 from '@fonts/Raleway-Thin.woff2'
 
 import { ModalProvider } from './context/ModalContext'
-import { AuthProvider } from './context/AuthContext'
 import { Router } from './Router'
 
 import { store } from '@/store/store'
@@ -124,9 +123,7 @@ export const App = () => (
         <CssBaseline enableColorScheme />
         <ModalProvider>
           <SnackbarProvider>
-            <AuthProvider>
-              <Router />
-            </AuthProvider>
+            <Router />
           </SnackbarProvider>
         </ModalProvider>
       </ThemeProvider>

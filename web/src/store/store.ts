@@ -41,5 +41,5 @@ if (token) {
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-export const useAppSelector = useSelector<RootState>
-export const useAppDispatch = useDispatch<AppDispatch>
+export const useAppSelector = useSelector.withTypes<RootState>()
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
