@@ -3,6 +3,7 @@ import bcrypt from "bcrypt"
 import z from "zod"
 
 import { createAccessToken, createRefreshToken, decodeToken, sendRefreshToken } from "../utils/auth"
+import { errorResponse, successResponse } from "../utils/responseHandler"
 import { LoginSchema, RegisterSchema } from "../schemas/auth.schemas"
 import { User, UserPayload } from "../entities/User"
 import { AppDataSource } from "../data-source"
@@ -16,13 +17,13 @@ export const login = async (req: IRequest, res: Response) => {
   })
 
   if (!user) {
-    return res.status(401).json({ message: "Invalid credentials" })
+    return errorResponse(res, "Invalid credentials", 401)
   }
 
   const match = await bcrypt.compare(body.password, user.password)
 
   if (!match) {
-    return res.status(401).json({ message: "Invalid credentials" })
+    return errorResponse(res, "Invalid credentials", 401)
   }
 
   user.tokenVersion = 1
@@ -32,8 +33,8 @@ export const login = async (req: IRequest, res: Response) => {
     sendRefreshToken(res, createRefreshToken(user))
   }
 
-  res.header("Authorization", createAccessToken(user))
-  return res.json(user)
+  res.header("Authorization", `Bearer ${createAccessToken(user)}`)
+  return successResponse(res, "Login successful", user)
 }
 
 export const register = async (req: IRequest, res: Response) => {
@@ -44,7 +45,7 @@ export const register = async (req: IRequest, res: Response) => {
   })
 
   if (user) {
-    return res.status(409).json({ message: "User already exists" })
+    return errorResponse(res, "User already exists", 409)
   }
 
   const hashedPassword = await bcrypt.hash(body.password, 10)
@@ -58,8 +59,8 @@ export const register = async (req: IRequest, res: Response) => {
 
   sendRefreshToken(res, createRefreshToken(newUser))
 
-  res.header("Authorization", createAccessToken(newUser))
-  return res.status(201).json(newUser)
+  res.header("Authorization", `Bearer ${createAccessToken(newUser)}`)
+  return successResponse(res, "User registered successfully", newUser)
 }
 
 export const logout = async (req: IRequest, res: Response) => {
@@ -68,14 +69,14 @@ export const logout = async (req: IRequest, res: Response) => {
   })
 
   if (!userLogged) {
-    return res.status(404).json({ message: "User not found" })
+    return errorResponse(res, "User not found", 404)
   }
 
   userLogged.tokenVersion = 0
   await AppDataSource.getRepository(User).save(userLogged)
 
   res.clearCookie("jid")
-  return res.json({ message: "Logout successful" })
+  return successResponse(res, "Logout successful")
 }
 
 export const getProfile = async (req: IRequest, res: Response) => {
@@ -84,17 +85,17 @@ export const getProfile = async (req: IRequest, res: Response) => {
   })
 
   if (!user) {
-    return res.status(404).json({ message: "User not found" })
+    return errorResponse(res, "User not found", 404)
   }
 
-  return res.json(user)
+  return successResponse(res, "User profile", user)
 }
 
 export const refreshToken = async (req: IRequest, res: Response) => {
   const token = req.cookies.jid
 
   if (!token) {
-    return res.status(401).json({ message: "No token provided" })
+    return errorResponse(res, "No token provided", 401)
   }
 
   try {
@@ -102,11 +103,11 @@ export const refreshToken = async (req: IRequest, res: Response) => {
     let user = await AppDataSource.getRepository(User).findOne({ where: { id: payload.id } })
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" })
+      return errorResponse(res, "User not found", 404)
     }
 
     if (user.tokenVersion !== payload.tokenVersion) {
-      return res.status(401).json({ message: "Token version mismatch" })
+      return errorResponse(res, "Token version mismatch", 401)
     }
 
     user.tokenVersion++
@@ -117,9 +118,9 @@ export const refreshToken = async (req: IRequest, res: Response) => {
 
     sendRefreshToken(res, newRefreshToken)
     res.header("Authorization", newAccessToken)
-    return res.json(user)
+    return successResponse(res, "Refresh token successful", user)
   } catch (error) {
     res.cookie("jid", "", { httpOnly: true, secure: false, sameSite: "lax", expires: new Date(0) })
-    return res.status(401).json({ message: "Invalid token" })
+    return errorResponse(res, "Invalid token", 401)
   }
 }

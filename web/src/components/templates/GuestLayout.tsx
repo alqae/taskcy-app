@@ -1,13 +1,14 @@
 import { Navigate, Outlet } from 'react-router-dom'
+import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import React from 'react'
 
-import { useAuth } from '@/context/AuthContext'
+import { isLoggedIn } from '@store/reducers/authSlice'
 import SiteIcon from '@/assets/images/Logo.svg'
+import { useAppSelector } from '@store/store'
 import { Routes } from '@types'
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -53,9 +54,9 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }))
 
 export const GuestLayout: React.FC = () => {
-  const { isLoggedIn } = useAuth()
+  const isAuthenticated = useAppSelector(isLoggedIn)
 
-  if (isLoggedIn) {
+  if (isAuthenticated) {
     return <Navigate to={Routes.DASHBOARD} />
   }
 

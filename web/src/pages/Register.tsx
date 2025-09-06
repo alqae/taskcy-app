@@ -16,8 +16,8 @@ import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 import Box from '@mui/material/Box'
 
+import { useSignUpMutation } from '@store/apis/authApi'
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
-import { useAuth } from '@/context/AuthContext'
 
 const schema = yup.object().shape({
   firstName: yup.string()
@@ -33,7 +33,7 @@ const schema = yup.object().shape({
 })
 
 const RegisterPage: React.FC = () => {
-  const { register, isLoading } = useAuth()
+  const [register, { isLoading }] = useSignUpMutation()
 
   const form = useForm({
     resolver: yupResolver(schema),
@@ -45,10 +45,6 @@ const RegisterPage: React.FC = () => {
     },
     mode: 'all',
   })
-
-  const handleSubmit = (data: yup.InferType<typeof schema>) => {
-    register(data)
-  }
 
   return (
     <ErrorBoundary>
@@ -68,7 +64,7 @@ const RegisterPage: React.FC = () => {
       <FormProvider {...form}>
         <Box
           component="form"
-          onSubmit={form.handleSubmit(handleSubmit)}
+          onSubmit={form.handleSubmit(register)}
           sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
         >
           <FormControl>

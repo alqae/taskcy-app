@@ -18,3 +18,9 @@ export interface PaginatedResponse<T> {
   total: number
   hits: T[]
 }
+
+export interface ApiResponse<T = unknown> {
+  data: T
+  message: string
+}
+

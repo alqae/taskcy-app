@@ -1,12 +1,12 @@
 import type { TaskPriority, TaskState } from './enums'
 import type { Category, Tag } from './models'
 
-export interface LoginRequest {
+export interface SignInRequest {
   email: string
   password: string
 }
 
-export interface RegisterRequest {
+export interface SignUpRequest {
   email: string
   firstName: string
   lastName: string

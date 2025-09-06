@@ -1,7 +1,8 @@
 import { createTheme } from '@mui/material/styles'
+import { CssBaseline, Fade } from '@mui/material'
 import { ThemeProvider } from '@emotion/react'
 import { SnackbarProvider } from 'notistack'
-import { CssBaseline, Fade } from '@mui/material'
+import { Provider } from 'react-redux'
 
 import RalewayMediumWoff2 from '@fonts/Raleway-Medium.woff2'
 import RalewayRegWoff2 from '@fonts/Raleway-Regular.woff2'
@@ -11,6 +12,8 @@ import RalewayThinWoff2 from '@fonts/Raleway-Thin.woff2'
 import { ModalProvider } from './context/ModalContext'
 import { AuthProvider } from './context/AuthContext'
 import { Router } from './Router'
+
+import { store } from '@/store/store'
 
 const getDesignTokens = (mode: 'light' | 'dark') => ({
   palette: {
@@ -113,14 +116,16 @@ const theme = createTheme({
 })
 
 export const App = () => (
-  <ThemeProvider theme={theme}>
-    <CssBaseline enableColorScheme />
-    <ModalProvider>
-      <SnackbarProvider>
-        <AuthProvider>
-          <Router />
-        </AuthProvider>
-      </SnackbarProvider>
-    </ModalProvider>
-  </ThemeProvider>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline enableColorScheme />
+      <ModalProvider>
+        <SnackbarProvider>
+          <AuthProvider>
+            <Router />
+          </AuthProvider>
+        </SnackbarProvider>
+      </ModalProvider>
+    </ThemeProvider>
+  </Provider>
 )

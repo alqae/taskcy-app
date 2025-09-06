@@ -22,8 +22,8 @@ import Divider from '@mui/material/Divider'
 import List from '@mui/material/List'
 import Box from '@mui/material/Box'
 
+import { useSignOutMutation } from '@store/apis/authApi'
 import { Appbar } from '@/components/molecules/Appbar'
-import { useAuth } from '@/context/AuthContext'
 import { Routes } from '@types'
 
 const drawerWidth = 240
@@ -84,19 +84,15 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 )
 
 export const Sidebar: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const [logOut, { isLoading }] = useSignOutMutation()
+
   const [open, setOpen] = useState(false)
 
   const theme = useTheme()
   const path = useLocation()
   const navigate = useNavigate()
-  const { logout, isLoading } = useAuth()
 
   const toggleDrawer = useCallback(() => setOpen((prev) => !prev), [])
-
-  const handleLogout = useCallback(async () => {
-    await logout()
-    navigate(Routes.LOGIN)
-  }, [logout, navigate])
 
   const ListItemIconProps = [
     {
@@ -205,7 +201,7 @@ export const Sidebar: React.FC<React.PropsWithChildren> = ({ children }) => {
           </ListItem>
 
           <ListItem disablePadding sx={{ display: 'block' }}>
-            <ListItemButton sx={ListItemButtonProps} onClick={handleLogout} disabled={isLoading}>
+            <ListItemButton sx={ListItemButtonProps} onClick={() => logOut()} disabled={isLoading}>
               <ListItemIcon sx={ListItemIconProps}>
                 <LogoutIcon />
               </ListItemIcon>

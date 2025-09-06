@@ -18,6 +18,7 @@
     "@mui/material": "^7.3.1",
     "@mui/x-charts": "^8.10.2",
     "@mui/x-date-pickers": "^8.10.2",
+    "@reduxjs/toolkit": "^2.9.0",
     "@tiptap/core": "^3.3.0",
     "@tiptap/extension-code-block": "^3.3.0",
     "@tiptap/extension-color": "^3.3.0",
@@ -62,8 +63,10 @@
     "react-dom": "^19.1.1",
     "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.62.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.8.2",
     "react-window": "^1.8.11",
+    "redux-logger": "^3.0.6",
     "yup": "^1.7.0"
   },
   "devDependencies": {
@@ -71,6 +74,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@types/react-window": "^1.8.8",
+    "@types/redux-logger": "^3.0.13",
     "@vitejs/plugin-react-swc": "^4.0.0",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
