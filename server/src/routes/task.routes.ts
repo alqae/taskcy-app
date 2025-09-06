@@ -1,7 +1,7 @@
 import { Router } from "express"
 
+import { CreateTaskSchema, TaskIdsSchema, UpdateTaskSchema } from "../schemas"
 import * as TaskController from "../controllers/task.controller"
-import { CreateTaskSchema, UpdateTaskSchema } from "../schemas"
 import { validate } from "../utils/validate"
 
 const router = Router()
@@ -132,5 +132,49 @@ router.delete("/:id", TaskController.remove)
  *         description: Task not found
  */
 router.patch("/:id/complete", TaskController.toggleComplete)
+
+/**
+ * @swagger
+ * /tasks/archive:
+ *   patch:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tasks]
+ *     summary: Archive multiple tasks
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/TaskIds'
+ *     responses:
+ *       204:
+ *         description: Tasks archived
+ *       404:
+ *         description: Tasks not found
+ */
+router.patch("/archive", validate(TaskIdsSchema), TaskController.archiveMany)
+
+/**
+ * @swagger
+ * /tasks:
+ *   delete:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tasks]
+ *     summary: Remove multiple tasks
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/TaskIds'
+ *     responses:
+ *       204:
+ *         description: Tasks removed
+ *       404:
+ *         description: Tasks not found
+ */
+router.delete("/", validate(TaskIdsSchema), TaskController.removeMany)
 
 export default router

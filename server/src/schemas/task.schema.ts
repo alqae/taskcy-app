@@ -25,3 +25,7 @@ export const TaskWithRelationSchema = TaskSchema.omit({ categoryId: true, tagIds
   tags: z.array(TagSchema.omit({})),
   user: userSchema.omit({}),
 }).meta({ id: "TaskWithRelation", description: "Task with relation schema" })
+
+export const TaskIdsSchema = z.object({
+  taskIds: z.array(z.number()).meta({ description: "Task IDs" }),
+}).meta({ id: "TaskIds", description: "Task IDs schema" })

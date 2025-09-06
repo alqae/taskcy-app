@@ -2,7 +2,7 @@ import { Response } from "express"
 import { In } from "typeorm"
 import z from "zod"
 
-import { CreateTaskSchema, UpdateTaskSchema } from "../schemas"
+import { CreateTaskSchema, TaskIdsSchema, UpdateTaskSchema } from "../schemas"
 import { Task, TaskState } from "../entities/Task"
 import { AppDataSource } from "../data-source"
 import { Category } from "../entities/Category"
@@ -256,3 +256,36 @@ export const toggleComplete = async (req: IRequest, res: Response) => {
 
   return res.json(task)
 }
+
+export const archiveMany = async (req: IRequest, res: Response) => {
+  const { taskIds } = req.body as z.infer<typeof TaskIdsSchema>
+  const tasks = await AppDataSource.getRepository(Task).find({
+    where: {
+      id: In(taskIds)
+    }
+  })
+
+  if (tasks.length === 0) {
+    return res.status(404).json({ message: "Tasks not found" })
+  }
+
+  await AppDataSource.getRepository(Task).update({ id: In(taskIds) }, { state: TaskState.ARCHIVED })
+  return res.status(204).json({ message: "Tasks archived successfully" })
+}
+
+export const removeMany = async (req: IRequest, res: Response) => {
+  const { taskIds } = req.body as z.infer<typeof TaskIdsSchema>
+  const tasks = await AppDataSource.getRepository(Task).find({
+    where: {
+      id: In(taskIds)
+    }
+  })
+
+  if (tasks.length === 0) {
+    return res.status(404).json({ message: "Tasks not found" })
+  }
+
+  await AppDataSource.getRepository(Task).remove(tasks)
+  return res.status(204).json({ message: "Tasks removed successfully" })
+}
+

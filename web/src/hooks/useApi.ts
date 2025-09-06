@@ -5,7 +5,7 @@ import { handleError } from '@/utils'
 
 type UseApiOptions<R> = {
   skip?: boolean
-  method?: "GET" | "POST" | "PUT" | "DELETE"
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
   body?: R
   headers?: Record<string, string>
   query?: Record<string, string>

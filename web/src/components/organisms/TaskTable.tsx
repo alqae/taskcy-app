@@ -48,9 +48,10 @@ interface TaskTableProps {
   allowedStates?: TaskState[]
   title?: string
   showAddModal?: boolean
+  onActionClick: (selectedIds: number[], refetch: () => Promise<void>) => void
 }
 
-export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title = 'Tasks', showAddModal = false }) => {
+export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title = 'Tasks', showAddModal = false, onActionClick }) => {
   const [order, setOrder] = React.useState<Order>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof Task>('expiryDate')
   const [page, setPage] = React.useState(0)
@@ -273,8 +274,8 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
         }}
         onRefresh={refetch}
         actionIcon={ArchiveIcon}
-        onActionClick={() => {
-          console.log(selectedIds)
+        onActionClick={(selectedIds) => {
+          onActionClick(selectedIds, refetch)
           setSelectedIds([])
         }}
       />
