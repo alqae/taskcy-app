@@ -24,8 +24,12 @@
 
     /* Paths */
     "paths": {
-      "@fonts/*": ["./src/assets/fonts/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
       "@types": ["./src/types"],
+      "@types/*": ["./src/types/*"],
+      "@fonts/*": ["./src/assets/fonts/*"],
+      "@store/*": ["./src/store/*"],
       "@/*": ["./src/*"],
     },
   },
