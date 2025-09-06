@@ -1,11 +1,11 @@
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import React, { Suspense, useCallback, useEffect } from 'react'
 import LinearProgress from '@mui/material/LinearProgress'
 import { FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import FormControl from '@mui/material/FormControl'
-import React, { Suspense, useEffect } from 'react'
 import InputLabel from '@mui/material/InputLabel'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
@@ -17,9 +17,10 @@ import Grid from '@mui/material/Grid'
 import moment from 'moment'
 import * as yup from 'yup'
 
-import { ItemOption, Task, TaskPriority, TaskState } from '@types'
+import { useGetCategoriesOptionsQuery } from '@store/apis/categoryApi'
+import { Option, Task, TaskPriority, TaskState } from '@types'
+import { useGetTagsOptionsQuery } from '@store/apis/tagApi'
 import { MultiListBox, ListBox } from './ListBox'
-import { useApi } from '@/hooks/useApi'
 
 const Editor = React.lazy(() => import('@/components/organisms/Editor'))
 
@@ -45,8 +46,8 @@ interface TaskFormProps {
 
 // This component will have three modes: create (default), update (defaultValue), and view (readonly)
 export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onCancel, onSubmit }) => {
-  const categoriesResponse = useApi<ItemOption[]>('/categories/options')
-  const tagsResponse = useApi<ItemOption[]>('/tags/options')
+  const categoriesResponse = useGetCategoriesOptionsQuery()
+  const tagsResponse = useGetTagsOptionsQuery()
 
   // const isEditing = !!defaultValue
   const form = useForm({
@@ -71,22 +72,30 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
   const expiryDate = form.watch('expiryDate')
   const formattedExpiryDate = expiryDate ? moment(expiryDate) : undefined
 
-  const [selectedTags, setSelectedTags] = React.useState<ItemOption[]>([])
-  const [selectedCategory, setSelectedCategory] = React.useState<ItemOption>()
+  const [selectedTags, setSelectedTags] = React.useState<Option[]>([])
+  const [selectedCategory, setSelectedCategory] = React.useState<Option>()
+
+  const getCategoryById = useCallback<(id: number) => Option | undefined>((id) => {
+    return categoriesResponse.data?.data.find((category) => category.value === id.toString())
+  }, [categoriesResponse.data])
+
+  const getTagsByIds = useCallback<(ids: number[]) => Option[]>((ids) => {
+    return tagsResponse.data?.data.filter((tag) => ids.includes(Number(tag.value))) || []
+  }, [tagsResponse.data])
 
   useEffect(() => {
     if (defaultValue) {
-      if (categoriesResponse.data?.length) {
-        const _selectedCategory = categoriesResponse.data?.find((category) => category.value === defaultValue.category!.id.toString())
+      if (categoriesResponse.data?.data) {
+        const _selectedCategory = getCategoryById(defaultValue.category!.id)
         setSelectedCategory(_selectedCategory)
       }
 
-      if (tagsResponse.data?.length) {
-        const _selectedTags = tagsResponse.data?.filter((tag) => defaultValue.tags.some((t) => t.id.toString() === tag.value)) ?? []
+      if (tagsResponse.data?.data) {
+        const _selectedTags = getTagsByIds(defaultValue.tags.map((tag) => tag.id) || [])
         setSelectedTags(_selectedTags)
       }
     }
-  }, [defaultValue, categoriesResponse.data, tagsResponse.data])
+  }, [defaultValue, categoriesResponse.data, tagsResponse.data, getCategoryById, getTagsByIds])
 
   return (
     <FormProvider {...form}>
@@ -209,7 +218,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
               )
             }}
             isLoading={categoriesResponse.isLoading || isLoading}
-            options={categoriesResponse.data || []}
+            options={categoriesResponse.data?.data || []}
             error={form.formState.errors.categoryId?.message}
           />
         </Grid>
@@ -227,7 +236,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
               )
             }}
             isLoading={tagsResponse.isLoading || isLoading}
-            options={tagsResponse.data || []}
+            options={tagsResponse.data?.data || []}
             error={form.formState.errors.tagIds?.message}
           />
         </Grid>

@@ -20,9 +20,10 @@ import type { Moment } from 'moment'
 
 import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
 import { CustomFilterPanel } from '@/components/molecules/CustomFilterPanel'
+import { useGetCategoriesOptionsQuery } from '@store/apis/categoryApi'
 import { FilterPanel } from '@/components/molecules/FilterPanel'
 import { TaskPriority, TaskState, ItemOption } from '@types'
-import { useApi, type ApiState } from '@/hooks/useApi'
+import { useGetTagsOptionsQuery } from '@store/apis/tagApi'
 
 interface TaskFiltersProps {
   expiryDate?: Moment
@@ -41,22 +42,22 @@ interface TaskFiltersProps {
 }
 
 export const TaskFilters: React.FC<TaskFiltersProps> = (props) => {
-  const categoriesResponse = useApi<ItemOption[]>('/categories/options')
-  const tagsResponse = useApi<ItemOption[]>('/tags/options')
+  const categoriesResponse = useGetCategoriesOptionsQuery()
+  const tagsResponse = useGetTagsOptionsQuery()
 
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('md'));
   const Component: React.ElementType = isMobile ? MobileTaskFilters : DesktopTaskFilters
-  return <Component {...props} categoriesResponse={categoriesResponse} tagsResponse={tagsResponse} />
+  return <Component {...props} categories={categoriesResponse.data} tags={tagsResponse.data} />
 }
 
 interface FilterPropsWithResponses extends TaskFiltersProps {
-  categoriesResponse: ApiState<ItemOption[], unknown>
-  tagsResponse: ApiState<ItemOption[], unknown>
+  categories: ItemOption[]
+  tags: ItemOption[]
 }
 
 const DesktopTaskFilters: React.FC<FilterPropsWithResponses> = ({
-  categoriesResponse,
-  tagsResponse,
+  categories,
+  tags,
   expiryDate,
   onExpiryDateChange,
   selectedPriorities,
@@ -139,7 +140,7 @@ const DesktopTaskFilters: React.FC<FilterPropsWithResponses> = ({
       <FilterPanel
         icon={<CategoryIcon />}
         title="Category"
-        columns={categoriesResponse.data || []}
+        columns={categories}
         value={selectedCategories}
         onChange={(value) => onSelectedCategoriesChange(value as string[])}
       />
@@ -147,7 +148,7 @@ const DesktopTaskFilters: React.FC<FilterPropsWithResponses> = ({
       <FilterPanel
         icon={<LocalOfferIcon />}
         title="Tags"
-        columns={tagsResponse.data || []}
+        columns={tags}
         value={selectedTags}
         onChange={(value) => onSelectedTagsChange(value as string[])}
       />
@@ -158,8 +159,8 @@ const DesktopTaskFilters: React.FC<FilterPropsWithResponses> = ({
 }
 
 const MobileTaskFilters: React.FC<FilterPropsWithResponses> = ({
-  categoriesResponse,
-  tagsResponse,
+  categories,
+  tags,
   expiryDate,
   onExpiryDateChange,
   selectedPriorities,
@@ -272,7 +273,7 @@ const MobileTaskFilters: React.FC<FilterPropsWithResponses> = ({
         asMenuItem
         icon={<CategoryIcon />}
         title="Category"
-        columns={categoriesResponse.data || []}
+        columns={categories}
         value={selectedCategories}
         onChange={(value) => onSelectedCategoriesChange(value as string[])}
       />
@@ -281,7 +282,7 @@ const MobileTaskFilters: React.FC<FilterPropsWithResponses> = ({
         asMenuItem
         icon={<LocalOfferIcon />}
         title="Tags"
-        columns={tagsResponse.data || []}
+        columns={tags}
         value={selectedTags}
         onChange={(value) => onSelectedTagsChange(value as string[])}
       />

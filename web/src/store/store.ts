@@ -8,8 +8,11 @@ import authSlice, { setAccessToken } from './reducers/authSlice'
 import exampleSlice from './reducers/exampleSlice'
 import sharedSlice from './reducers/sharedSlice'
 
+import { categoryApi } from './apis/categoryApi'
 import { exampleApi } from './apis/exampleApi'
 import { authApi } from './apis/authApi'
+import { taskApi } from './apis/taskApi'
+import { tagApi } from './apis/tagApi'
 
 export const store = configureStore({
   reducer: {
@@ -18,12 +21,18 @@ export const store = configureStore({
     auth: authSlice,
     [authApi.reducerPath]: authApi.reducer,
     [exampleApi.reducerPath]: exampleApi.reducer,
+    [taskApi.reducerPath]: taskApi.reducer,
+    [categoryApi.reducerPath]: categoryApi.reducer,
+    [tagApi.reducerPath]: tagApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false })
       .concat(
         authApi.middleware,
         exampleApi.middleware,
+        taskApi.middleware,
+        categoryApi.middleware,
+        tagApi.middleware,
         // thunk,
         ...(import.meta.env.DEV ? [logger] : [])
       ),

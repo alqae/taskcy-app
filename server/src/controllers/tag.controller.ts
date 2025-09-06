@@ -2,6 +2,7 @@ import { Response } from "express"
 import { Like } from "typeorm"
 import z from "zod"
 
+import { successResponse } from "../utils/responseHandler"
 import { CreateTagSchema } from "../schemas/tag.schema"
 import { AppDataSource } from "../data-source"
 import { User } from "../entities/User"
@@ -45,7 +46,11 @@ export const getOptions = async (_: IRequest, res: Response) => {
   const tags = await AppDataSource.getRepository(Tag).find({
     select: ["id", "name"],
   })
-  return res.json(tags.map((tag) => ({ label: tag.name, value: tag.id.toString() })))
+  return successResponse(
+    res,
+    "Tags",
+    tags.map((tag) => ({ label: tag.name, value: tag.id.toString() }))
+  )
 }
 
 export const create = async (req: IRequest, res: Response) => {

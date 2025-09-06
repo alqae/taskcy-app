@@ -19,11 +19,11 @@ import Stack from '@mui/material/Stack'
 import Grid from '@mui/material/Grid'
 import List from '@mui/material/List'
 
-import type { CreateTaskRequest, Task, TaskPriority, TaskState } from '@types'
+import { useCreateTaskMutation, useUpdateTaskMutation } from '@store/apis/taskApi'
+import type { Task, TaskPriority, TaskState } from '@types'
 import { TaskForm } from '@/components/molecules/TaskForm'
 import { Puller } from '@/components/atoms/Puller'
 import useExtensions from '@/hooks/useExtensions'
-import { useApi } from '@/hooks/useApi'
 
 interface TaskModalProps {
   renderLauncher: (toggle: () => void) => React.ReactNode
@@ -34,15 +34,8 @@ interface TaskModalProps {
 export const TaskModal: React.FC<TaskModalProps> = ({ renderLauncher, onSubmit, task }) => {
   const [isEditable, setIsEditable] = useState(task !== undefined ? false : true)
 
-  const createRequest = useApi<Task, CreateTaskRequest>('/tasks', {
-    method: 'POST',
-    skip: true,
-  })
-
-  const updateRequest = useApi<Task, CreateTaskRequest>(`/tasks/${task?.id}`, {
-    method: 'PUT',
-    skip: true,
-  })
+  const [createTask, createTaskStatus] = useCreateTaskMutation()
+  const [updateTask, updateTaskStatus] = useUpdateTaskMutation()
 
   const [open, setOpen] = React.useState(false)
 
@@ -62,13 +55,15 @@ export const TaskModal: React.FC<TaskModalProps> = ({ renderLauncher, onSubmit, 
     placeholder: 'Add your own content here...',
   })
 
+  const isLoading = createTaskStatus.isLoading || updateTaskStatus.isLoading
+
   return (
     <>
       {renderLauncher(() => setOpen(true))}
       <Drawer
         anchor="bottom"
         open={open}
-        onClose={createRequest.isLoading ? undefined : () => setOpen(false)}
+        onClose={isLoading ? undefined : () => setOpen(false)}
         slotProps={{
           paper: {
             sx: {
@@ -89,7 +84,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({ renderLauncher, onSubmit, 
         {isEditable ? (
           <TaskForm
             defaultValue={task}
-            isLoading={createRequest.isLoading}
+            isLoading={isLoading}
             onCancel={() => {
               if (task) {
                 setIsEditable(false)
@@ -98,16 +93,19 @@ export const TaskModal: React.FC<TaskModalProps> = ({ renderLauncher, onSubmit, 
               }
             }}
             onSubmit={async (data) => {
-              const action = task ? updateRequest.refetch : createRequest.refetch
-              await action({
-                body: {
-                  ...data,
-                  state: data.state as TaskState,
-                  priority: data.priority as TaskPriority,
-                  expiryDate: data.expiryDate.toISOString(),
-                  description: data.description ?? '',
-                },
-              })
+              const payload = {
+                ...data,
+                state: data.state as TaskState,
+                priority: data.priority as TaskPriority,
+                expiryDate: data.expiryDate.toISOString(),
+                description: data.description ?? '',
+              }
+
+              if (task) {
+                await updateTask([task.id, payload])
+              } else {
+                await createTask(payload)
+              }
 
               setIsEditable(false)
               setOpen(false)

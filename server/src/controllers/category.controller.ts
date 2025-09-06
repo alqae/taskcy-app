@@ -3,6 +3,7 @@ import { Like } from "typeorm"
 import z from "zod"
 
 import { CreateCategorySchema, UpdateCategorySchema } from "../schemas/category.schema"
+import { successResponse } from "../utils/responseHandler"
 import { AppDataSource } from "../data-source"
 import { Category } from "../entities/Category"
 import { User } from "../entities/User"
@@ -45,7 +46,11 @@ export const getOptions = async (_: IRequest, res: Response) => {
   const categories = await AppDataSource.getRepository(Category).find({
     select: ["id", "name"],
   })
-  return res.json(categories.map((category) => ({ label: category.name, value: category.id.toString() })))
+  return successResponse(
+    res,
+    "Categories",
+    categories.map((category) => ({ label: category.name, value: category.id.toString() }))
+  )
 }
 
 export const create = async (req: IRequest, res: Response) => {

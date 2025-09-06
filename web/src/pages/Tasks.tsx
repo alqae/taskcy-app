@@ -2,15 +2,12 @@ import { Helmet } from 'react-helmet-async'
 import { enqueueSnackbar } from 'notistack'
 import React from 'react'
 
+import { useArchiveManyTasksMutation } from '@store/apis/taskApi'
 import { TaskTable } from '@/components/organisms/TaskTable'
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
-import { useApi } from '@/hooks/useApi'
 
 const TasksPage: React.FC = () => {
-  const archiveRequest = useApi('/tasks/archive', {
-    method: 'PATCH',
-    skip: true,
-  })
+  const [archiveTasks] = useArchiveManyTasksMutation()
 
   return (
     <ErrorBoundary>
@@ -23,7 +20,7 @@ const TasksPage: React.FC = () => {
         showAddModal
         onActionClick={async (selectedIds, refetch) => {
           try {
-            await archiveRequest.refetch({ body: { taskIds: selectedIds } })
+            await archiveTasks(selectedIds)
             enqueueSnackbar('Tasks archived successfully', { variant: 'success' })
           } finally {
             refetch()

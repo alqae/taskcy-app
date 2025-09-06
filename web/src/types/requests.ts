@@ -23,3 +23,22 @@ export interface CreateTaskRequest {
   categoryId?: Category['id']
   tagIds?: Tag['id'][]
 }
+
+export interface CreateTagRequest {
+  name: string
+  description: string
+  color: string
+}
+
+export interface CreateCategoryRequest {
+  name: string
+  description: string
+  color: string
+}
+
+export interface PaginatedRequest extends Record<string, string | number> {
+  take: number
+  skip: number
+  sort_by: string
+  sort_order: 'asc' | 'desc'
+}

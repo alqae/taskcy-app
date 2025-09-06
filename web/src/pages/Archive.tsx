@@ -2,16 +2,13 @@ import { enqueueSnackbar } from 'notistack'
 import { Helmet } from 'react-helmet-async'
 import React from 'react'
 
+import { useDeleteManyTasksMutation } from '@store/apis/taskApi'
 import { TaskTable } from '@/components/organisms/TaskTable'
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
-import { useApi } from '@/hooks/useApi'
 import { TaskState } from '@types'
 
 const ArchivePage: React.FC = () => {
-  const archiveRequest = useApi('/tasks', {
-    method: 'DELETE',
-    skip: true,
-  })
+  const [deleteManyTasks] = useDeleteManyTasksMutation()
 
   return (
     <ErrorBoundary>
@@ -25,12 +22,11 @@ const ArchivePage: React.FC = () => {
         title="Archive"
         onActionClick={async (selectedIds, refetch) => {
           try {
-            await archiveRequest.refetch({ body: { taskIds: selectedIds } })
+            await deleteManyTasks(selectedIds)
             enqueueSnackbar('Tasks archived successfully', { variant: 'success' })
           } finally {
             refetch()
           }
-          refetch()
         }}
       />
     </ErrorBoundary>
