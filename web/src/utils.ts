@@ -1,4 +1,8 @@
-import { enqueueSnackbar } from 'notistack'
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
+import type { SerializedError } from '@reduxjs/toolkit'
+
+import type { ApiResponse } from '@types'
+import i18n from '@/i18n'
 
 export const textOn = (hex: string): '#000000' | '#FFFFFF' => {
   const clean = hex.replace(/^#/, '').toLowerCase()
@@ -41,19 +45,6 @@ export const textOn = (hex: string): '#000000' | '#FFFFFF' => {
   return cBlack >= cWhite ? '#000000' : '#FFFFFF'
 }
 
-export const handleError = (error: unknown): string => {
-  let message = 'Something went wrong'
-
-  if (error instanceof Object && 'message' in error) {
-    message = error.message as string
-  } else {
-    message = error as string
-  }
-
-  enqueueSnackbar(message, { variant: 'error' })
-  return message
-}
-
 export const getCookie = (name: string) => {
   if (typeof document === 'undefined') return undefined
   const value = `; ${document.cookie}`
@@ -63,4 +54,24 @@ export const getCookie = (name: string) => {
     return cookieValue || undefined
   }
   return undefined
+}
+
+export const handleError = (error?: FetchBaseQueryError | SerializedError | Error | unknown): string => {
+  if (error && typeof error === 'object') {
+    if ('error' in error) {
+      return handleError(error.error as FetchBaseQueryError | SerializedError | Error)
+    } else if ('status' in error && 'data' in error) {
+      if (error.data != null && 'message' in (error.data as ApiResponse<void>)) {
+        return i18n.t(`errors.${(error.data as ApiResponse<void>).message}`)
+      } else {
+        return i18n.t('common.error')
+      }
+    } else if ('message' in error) {
+      return i18n.t(`errors.${(error as Error).message}`)
+    }
+  } else if (error && typeof error === 'string') {
+    return error
+  }
+
+  return ''
 }

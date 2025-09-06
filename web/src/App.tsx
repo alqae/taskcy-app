@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 import { CssBaseline, Fade } from '@mui/material'
+import { I18nextProvider } from 'react-i18next'
 import { ThemeProvider } from '@emotion/react'
 import { SnackbarProvider } from 'notistack'
 import { Provider } from 'react-redux'
@@ -14,6 +15,7 @@ import { AuthProvider } from './context/AuthContext'
 import { Router } from './Router'
 
 import { store } from '@/store/store'
+import i18n from '@/i18n'
 
 const getDesignTokens = (mode: 'light' | 'dark') => ({
   palette: {
@@ -116,16 +118,18 @@ const theme = createTheme({
 })
 
 export const App = () => (
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline enableColorScheme />
-      <ModalProvider>
-        <SnackbarProvider>
-          <AuthProvider>
-            <Router />
-          </AuthProvider>
-        </SnackbarProvider>
-      </ModalProvider>
-    </ThemeProvider>
-  </Provider>
+  <I18nextProvider i18n={i18n}>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline enableColorScheme />
+        <ModalProvider>
+          <SnackbarProvider>
+            <AuthProvider>
+              <Router />
+            </AuthProvider>
+          </SnackbarProvider>
+        </ModalProvider>
+      </ThemeProvider>
+    </Provider>
+  </I18nextProvider>
 )
