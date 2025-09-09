@@ -24,24 +24,22 @@ export const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) =>
     const { status } = result.error as { status?: number }
     const state = api.getState() as RootState
 
-    if (status === 401) {
-      if (state.auth.accessToken) {
-        const response = await fetch(`${baseUrl}/auth/refresh-token`, {
-          credentials: 'include', // We only need to include refreshToken (jid cookie)
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        })
-
-        if (response.ok) {
-          const { accessToken } = await response.json()
-          api.dispatch(setAccessToken(accessToken))
-          return rawBaseQuery(args, api, extraOptions)
+    if (status === 401 && state.auth.accessToken) {
+      const response = await fetch(`${baseUrl}/auth/refresh-token`, {
+        credentials: 'include', // We only need to include refreshToken (jid cookie)
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         }
-      }
+      })
 
-      api.dispatch(clearAuth())
+      if (response.ok) {
+        const { accessToken } = await response.json()
+        api.dispatch(setAccessToken(accessToken))
+        return rawBaseQuery(args, api, extraOptions)
+      } else {
+        api.dispatch(clearAuth())
+      }
     } else {
       enqueueSnackbar(handleError(result), { variant: 'error' })
     }

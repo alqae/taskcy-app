@@ -1,8 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
+import { enqueueSnackbar } from 'notistack'
 
 import type { UpdateProfileRequest, UpdatePasswordRequest, ApiResponse, User } from '@types'
-import { baseQuery } from './apiConfig'
 import { setUser } from '@store/reducers/authSlice'
+import { baseQuery } from './apiConfig'
 
 export const profileApi = createApi({
   reducerPath: 'profileApi',
@@ -26,7 +27,11 @@ export const profileApi = createApi({
         method: 'PUT',
         body
       }),
-      invalidatesTags: ['Profile']
+      invalidatesTags: ['Profile'],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+        enqueueSnackbar('Profile updated successfully', { variant: 'success' })
+      }
     }),
     updatePassword: builder.mutation<void, UpdatePasswordRequest>({
       query: (body) => ({
@@ -34,6 +39,10 @@ export const profileApi = createApi({
         method: 'PUT',
         body
       }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+        enqueueSnackbar('Password updated successfully', { variant: 'success' })
+      }
     })
   }),
 })
