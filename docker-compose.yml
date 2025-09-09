@@ -13,6 +13,8 @@ services:
       - ./proxy/conf.d:/etc/nginx/conf.d
     networks:
       - taskcy_app_proxy
+    mem_limit: 128m
+    cpus: 0.25
 
   web:
     build:
@@ -28,6 +30,8 @@ services:
       - taskcy_app_proxy
     depends_on:
       - api
+    mem_limit: 256m
+    cpus: 0.50
 
   api:
     build:
@@ -55,6 +59,8 @@ services:
       - taskcy_app_proxy
     command: >
       sh -c "yarn run migration:run && yarn start"
+    mem_limit: 512m
+    cpus: 0.75
 
   db:
     image: postgres:15
@@ -70,6 +76,8 @@ services:
     restart: unless-stopped
     networks:
       - taskcy_app_be
+    mem_limit: 768m
+    cpus: 0.75
 
 
   adminer:
@@ -81,6 +89,8 @@ services:
     networks:
       - taskcy_app_be
       - taskcy_app_proxy
+    mem_limit: 128m
+    cpus: 0.25
 
 volumes:
   db_data:
