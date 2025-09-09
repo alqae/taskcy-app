@@ -17,8 +17,8 @@ import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
-import React, { useMemo } from 'react'
 import Box from '@mui/material/Box'
+import React from 'react'
 
 import { EmptyState } from './EmptyState'
 
@@ -148,7 +148,7 @@ export const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({
           <ActionIcon />
         </IconButton>
       </Tooltip>
-    ) : filters }
+    ) : filters}
   </Toolbar>
 )
 
@@ -241,9 +241,6 @@ export const EnhancedTable = <T extends { id: number }>({
     onPaginationChange(0, newRowsPerPage)
   }
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = useMemo(() => pagination.page > 0 ? Math.max(0, (1 + pagination.page) * pagination.rowsPerPage - rows.length) : 0, [pagination.page, pagination.rowsPerPage, rows.length])
-
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -277,46 +274,36 @@ export const EnhancedTable = <T extends { id: number }>({
                   </TableRow>
                 ))
               ) : (
-                rows.map((row, index) => renderRow(row, index, handleClick, selectedIds.includes(row.id)))
-              )}
-
-              {error ? (
-                <TableRow>
-                  <TableCell colSpan={headCells.length + 1}>
-                    <EmptyState
-                      title="Error"
-                      subtitle="An error occurred while loading the data"
-                      icon={WarningAmberIcon}
-                      showActions
-                      borderLess
-                      onAction={onRefresh}
-                    />
-                  </TableCell>
-                </TableRow>
-              ) : (
-                rows.length === 0 && (
+                error ? (
                   <TableRow>
                     <TableCell colSpan={headCells.length + 1}>
                       <EmptyState
-                        title="No data"
-                        subtitle="When you have data, they'll appear here"
+                        title="Error"
+                        subtitle="An error occurred while loading the data"
+                        icon={WarningAmberIcon}
                         showActions
                         borderLess
                         onAction={onRefresh}
                       />
                     </TableCell>
                   </TableRow>
+                ) : (
+                  rows.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={headCells.length + 1}>
+                        <EmptyState
+                          title="No data"
+                          subtitle="When you have data, they'll appear here"
+                          showActions
+                          borderLess
+                          onAction={onRefresh}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    rows.map((row, index) => renderRow(row, index, handleClick, selectedIds.includes(row.id)))
+                  )
                 )
-              )}
-
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={headCells.length + 1} />
-                </TableRow>
               )}
             </TableBody>
           </Table>
