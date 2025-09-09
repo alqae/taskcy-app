@@ -73,6 +73,7 @@ export const ExpiredTasksTable: React.FC = () => {
     <EnhancedTable<Task>
       dense
       isLoading={isLoading}
+      totalItems={0}
       title="Tasks expiring today"
       headCells={[
         { id: 'name', label: 'Name', disablePadding: false, numeric: false },
