@@ -11,31 +11,43 @@ import type { ModalOptions } from '@/context/ModalContext'
 import type { Category } from '@/types'
 
 export interface CategoryModalProps extends ModalOptions {
-  defaultValue?: Category
   title: string
   description: string
+  defaultValue?: Category
+  onSubmit: CategoryFormProps['onSubmit']
+  isLoading: boolean
 }
 
-export const CategoryModal: React.FC<CategoryModalProps> = ({ defaultValue, onClose, title, description, isClosing }) => {
+export const CategoryModal: React.FC<CategoryModalProps> = ({
+  defaultValue,
+  onClose,
+  title,
+  description,
+  isClosing,
+  onSubmit,
+  isLoading,
+}) => {
   const formRef = useRef<HTMLFormElement>(null)
 
-  const onSubmit: CategoryFormProps['onSubmit'] = (data) => {
-    console.log(data)
-    onClose?.()
-  }
+  const handleClose = isLoading ? undefined : onClose
 
   return (
-    <Dialog open={!isClosing} onClose={onClose}>
+    <Dialog open={!isClosing} onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
 
       <DialogContent>
         <DialogContentText sx={{ mb: 2 }}>{description}</DialogContentText>
-        <CategoryForm ref={formRef} defaultValue={defaultValue} onSubmit={onSubmit} />
+        <CategoryForm
+          ref={formRef}
+          defaultValue={defaultValue}
+          onSubmit={onSubmit}
+          isLoading={isLoading}
+        />
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={() => formRef.current?.requestSubmit()}>Save</Button>
+        <Button disabled={isLoading} onClick={handleClose}>Cancel</Button>
+        <Button disabled={isLoading} onClick={() => formRef.current?.requestSubmit()}>Save</Button>
       </DialogActions>
     </Dialog>
   )

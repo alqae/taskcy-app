@@ -15,11 +15,12 @@ const schema = yup.object().shape({
 })
 
 export interface TagFormProps {
+  isLoading: boolean
   defaultValue?: Tag
   onSubmit: (data: yup.InferType<typeof schema>) => void
 }
 
-export const TagForm = forwardRef<HTMLFormElement, TagFormProps>(({ defaultValue, onSubmit }, ref) => {
+export const TagForm = forwardRef<HTMLFormElement, TagFormProps>(({ defaultValue, isLoading, onSubmit }, ref) => {
   const form = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -38,6 +39,7 @@ export const TagForm = forwardRef<HTMLFormElement, TagFormProps>(({ defaultValue
             label="Name"
             autoComplete="off"
             placeholder="Finance, Health, etc."
+            disabled={isLoading}
             error={Boolean(form.formState.errors.name)}
             helperText={form.formState.errors.name?.message}
             color={form.formState.errors.name ? 'error' : 'primary'}
@@ -47,6 +49,7 @@ export const TagForm = forwardRef<HTMLFormElement, TagFormProps>(({ defaultValue
           <TextField
             label="Description"
             placeholder="Description"
+            disabled={isLoading}
             error={Boolean(form.formState.errors.description)}
             helperText={form.formState.errors.description?.message}
             color={form.formState.errors.description ? 'error' : 'primary'}
@@ -57,6 +60,7 @@ export const TagForm = forwardRef<HTMLFormElement, TagFormProps>(({ defaultValue
             label="Color"
             format="hex"
             placeholder="Color"
+            disabled={isLoading}
             error={Boolean(form.formState.errors.color)}
             helperText={form.formState.errors.color?.message}
             color={form.formState.errors.color ? 'error' : 'primary'}

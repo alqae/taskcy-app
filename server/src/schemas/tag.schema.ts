@@ -8,3 +8,5 @@ export const TagSchema = z.object({
 }).meta({ id: "Tag", description: "Tag schema" })
 
 export const CreateTagSchema = TagSchema.omit({ id: true }).meta({ id: "CreateTag", description: "Create tag schema" })
+
+export const UpdateTagSchema = TagSchema.omit({ id: true }).meta({ id: "UpdateTag", description: "Update tag schema" })

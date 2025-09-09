@@ -9,18 +9,28 @@ import SpeedDialAction from '@mui/material/SpeedDialAction'
 
 import { CategoryTable } from '@/components/organisms/CategoryTable'
 import { CategoryModal } from '@/components/organisms/CategoryModal'
+import { useCreateCategoryMutation } from '@/store/apis/categoryApi'
 import { TagTable } from '@/components/organisms/TagTable'
 import { TagModal } from '@/components/organisms/TagModal'
+import { useCreateTagMutation } from '@/store/apis/tagApi'
 import ErrorBoundary from '@/wrappers/ErrorBoundary'
 import { useModal } from '@/context/ModalContext'
 
 const Settings: React.FC = () => {
   const modal = useModal()
 
+  const [createTag, { isLoading: isCreatingTag }] = useCreateTagMutation()
+  const [createCategory, { isLoading: isCreatingCategory }] = useCreateCategoryMutation()
+
   const handleAddTag = () => {
     modal.showModal(TagModal, {
       title: 'Add Tag',
       description: 'Please fill in the form below to add a new tag.',
+      onSubmit: async (data) => {
+        await createTag(data)
+        modal.hideModal()
+      },
+      isLoading: isCreatingTag,
     })
   }
 
@@ -28,6 +38,11 @@ const Settings: React.FC = () => {
     modal.showModal(CategoryModal, {
       title: 'Add Category',
       description: 'Please fill in the form below to add a new category.',
+      onSubmit: async (data) => {
+        await createCategory(data)
+        modal.hideModal()
+      },
+      isLoading: isCreatingCategory,
     })
   }
 

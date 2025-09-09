@@ -1,7 +1,7 @@
 import { Router } from "express"
 
+import { CreateTagSchema, UpdateTagSchema } from "../schemas/tag.schema"
 import * as TagController from "../controllers/tag.controller"
-import { CreateTagSchema } from "../schemas/tag.schema"
 import { validate } from "../utils/validate"
 
 const router = Router()
@@ -76,5 +76,37 @@ router.get("/options", TagController.getOptions)
  *               $ref: '#/components/schemas/Tag'
  */
 router.post("/", validate(CreateTagSchema), TagController.create)
+
+/**
+ * @swagger
+ * /tags/{id}:
+ *   put:
+ *     security:
+ *       - BearerAuth: []
+ *     tags: [Tags]
+ *     summary: Update a tag
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateTag'
+ *     responses:
+ *       204:
+ *         description: Tag updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Tag'
+ *       404:
+ *         description: Tag not found
+ */
+router.put("/:id", validate(UpdateTagSchema), TagController.update)
 
 export default router

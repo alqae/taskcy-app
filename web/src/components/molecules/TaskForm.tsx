@@ -65,10 +65,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
     mode: 'all',
   })
 
-  const handleSubmit = (data: yup.InferType<typeof schema>) => {
-    onSubmit(data)
-  }
-
   const expiryDate = form.watch('expiryDate')
   const formattedExpiryDate = expiryDate ? moment(expiryDate) : undefined
 
@@ -99,7 +95,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
 
   return (
     <FormProvider {...form}>
-      <Grid container spacing={2} component="form" onSubmit={form.handleSubmit(handleSubmit)}>
+      <Grid container spacing={2} component="form" onSubmit={form.handleSubmit(onSubmit)}>
         <Grid size={12}>
           <TextField
             fullWidth

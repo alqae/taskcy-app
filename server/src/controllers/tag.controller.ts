@@ -2,8 +2,8 @@ import { Response } from "express"
 import { Like } from "typeorm"
 import z from "zod"
 
+import { CreateTagSchema, UpdateTagSchema } from "../schemas/tag.schema"
 import { successResponse } from "../utils/responseHandler"
-import { CreateTagSchema } from "../schemas/tag.schema"
 import { AppDataSource } from "../data-source"
 import { User } from "../entities/User"
 import { Tag } from "../entities/Tag"
@@ -74,4 +74,20 @@ export const create = async (req: IRequest, res: Response) => {
 
   await AppDataSource.getRepository(Tag).save(tag)
   return res.status(201).json(tag)
+}
+
+export const update = async (req: IRequest, res: Response) => {
+  const tagId = parseInt(req.params.id)
+  const tag = await AppDataSource.getRepository(Tag).findOne({
+    where: { id: tagId },
+  })
+
+  if (!tag) {
+    return res.status(404).json({ message: "Tag not found" })
+  }
+
+  const body: z.infer<typeof UpdateTagSchema> = req.body
+
+  await AppDataSource.getRepository(Tag).update(tagId, body)
+  return res.status(204).json()
 }

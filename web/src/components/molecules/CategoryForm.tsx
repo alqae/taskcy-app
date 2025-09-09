@@ -15,11 +15,12 @@ const schema = yup.object().shape({
 })
 
 export interface CategoryFormProps {
+  isLoading: boolean
   defaultValue?: Category
   onSubmit: (data: yup.InferType<typeof schema>) => void
 }
 
-export const CategoryForm = forwardRef<HTMLFormElement, CategoryFormProps>(({ defaultValue, onSubmit }, ref) => {
+export const CategoryForm = forwardRef<HTMLFormElement, CategoryFormProps>(({ defaultValue, isLoading, onSubmit }, ref) => {
   const form = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -38,6 +39,7 @@ export const CategoryForm = forwardRef<HTMLFormElement, CategoryFormProps>(({ de
             label="Name"
             autoComplete="off"
             placeholder="Finance, Health, etc."
+            disabled={isLoading}
             error={Boolean(form.formState.errors.name)}
             helperText={form.formState.errors.name?.message}
             color={form.formState.errors.name ? 'error' : 'primary'}
@@ -47,6 +49,7 @@ export const CategoryForm = forwardRef<HTMLFormElement, CategoryFormProps>(({ de
           <TextField
             label="Description"
             placeholder="Description"
+            disabled={isLoading}
             error={Boolean(form.formState.errors.description)}
             helperText={form.formState.errors.description?.message}
             color={form.formState.errors.description ? 'error' : 'primary'}
@@ -57,6 +60,7 @@ export const CategoryForm = forwardRef<HTMLFormElement, CategoryFormProps>(({ de
             label="Color"
             format="hex"
             placeholder="Color"
+            disabled={isLoading}
             error={Boolean(form.formState.errors.color)}
             helperText={form.formState.errors.color?.message}
             color={form.formState.errors.color ? 'error' : 'primary'}

@@ -11,31 +11,43 @@ import type { ModalOptions } from '@/context/ModalContext'
 import type { Tag } from '@/types'
 
 export interface TagModalProps extends ModalOptions {
-  defaultValue?: Tag
   title: string
   description: string
+  defaultValue?: Tag
+  onSubmit: TagFormProps['onSubmit']
+  isLoading: boolean
 }
 
-export const TagModal: React.FC<TagModalProps> = ({ defaultValue, onClose, title, description, isClosing }) => {
+export const TagModal: React.FC<TagModalProps> = ({
+  defaultValue,
+  onClose,
+  title,
+  description,
+  isClosing,
+  onSubmit,
+  isLoading,
+}) => {
   const formRef = useRef<HTMLFormElement>(null)
 
-  const onSubmit: TagFormProps['onSubmit'] = (data) => {
-    console.log(data)
-    onClose?.()
-  }
+  const handleClose = isLoading ? undefined : onClose
 
   return (
-    <Dialog open={!isClosing} onClose={onClose}>
+    <Dialog open={!isClosing} onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
 
       <DialogContent>
         <DialogContentText sx={{ mb: 2 }}>{description}</DialogContentText>
-        <TagForm ref={formRef} defaultValue={defaultValue} onSubmit={onSubmit} />
+        <TagForm
+          ref={formRef}
+          defaultValue={defaultValue}
+          isLoading={isLoading}
+          onSubmit={onSubmit}
+        />
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={() => formRef.current?.requestSubmit()}>Save</Button>
+        <Button disabled={isLoading} onClick={handleClose}>Cancel</Button>
+        <Button disabled={isLoading} onClick={() => formRef.current?.requestSubmit()}>Save</Button>
       </DialogActions>
     </Dialog>
   )

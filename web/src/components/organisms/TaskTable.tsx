@@ -116,7 +116,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
 
   const taskResponse = useGetTasksQuery({
     take: rowsPerPage,
-    skip: page,
+    skip: page * rowsPerPage,
     sort_by: orderBy,
     sort_order: order,
     search: debouncedSearch,

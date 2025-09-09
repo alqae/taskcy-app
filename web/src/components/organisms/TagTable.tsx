@@ -11,6 +11,7 @@ import Chip from '@mui/material/Chip'
 
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
 import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
+import { useUpdateTagMutation } from '@/store/apis/tagApi'
 import { useGetTagsQuery } from '@store/apis/tagApi'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useModal } from '@/context/ModalContext'
@@ -19,6 +20,8 @@ import { TagModal } from './TagModal'
 import type { Tag } from '@types'
 
 export const TagTable: React.FC = () => {
+  const [updateTag, { isLoading: isUpdatingTag }] = useUpdateTagMutation()
+
   const [order, setOrder] = useState<Order>('asc')
   const [orderBy, setOrderBy] = useState<keyof Tag>('name')
   const [page, setPage] = useState(0)
@@ -51,7 +54,7 @@ export const TagTable: React.FC = () => {
 
   const tagsResponse = useGetTagsQuery({
     take: rowsPerPage,
-    skip: page,
+    skip: page * rowsPerPage,
     sort_by: orderBy,
     sort_order: order,
     search: debouncedSearch,
@@ -63,9 +66,14 @@ export const TagTable: React.FC = () => {
 
   const onEdit = (tag: Tag) => {
     modal.showModal(TagModal, {
+      defaultValue: tag,
       title: 'Edit Tag',
       description: 'Please fill in the form below to edit the tag.',
-      defaultValue: tag,
+      isLoading: isUpdatingTag,
+      onSubmit: async (data) => {
+        await updateTag([tag.id, data])
+        modal.hideModal()
+      },
     })
   }
 

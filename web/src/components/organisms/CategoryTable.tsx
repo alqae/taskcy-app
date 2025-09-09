@@ -11,6 +11,7 @@ import Chip from '@mui/material/Chip'
 
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
 import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
+import { useUpdateCategoryMutation } from '@/store/apis/categoryApi'
 import { useGetCategoriesQuery } from '@store/apis/categoryApi'
 import { useModal } from '@/context/ModalContext'
 import { useDebounce } from '@/hooks/useDebounce'
@@ -19,6 +20,8 @@ import { handleError, textOn } from '@/utils'
 import type { Category } from '@types'
 
 export const CategoryTable: React.FC = () => {
+  const [updateCategory, { isLoading: isUpdatingCategory }] = useUpdateCategoryMutation()
+
   const [order, setOrder] = useState<Order>('asc')
   const [orderBy, setOrderBy] = useState<keyof Category>('name')
   const [page, setPage] = useState(0)
@@ -51,7 +54,7 @@ export const CategoryTable: React.FC = () => {
 
   const categoriesResponse = useGetCategoriesQuery({
     take: rowsPerPage,
-    skip: page,
+    skip: page * rowsPerPage,
     sort_by: orderBy,
     sort_order: order,
     search: debouncedSearch,
@@ -63,9 +66,14 @@ export const CategoryTable: React.FC = () => {
 
   const onEdit = (category: Category) => {
     modal.showModal(CategoryModal, {
+      defaultValue: category,
       title: 'Edit Category',
       description: 'Please fill in the form below to edit the category.',
-      defaultValue: category,
+      isLoading: isUpdatingCategory,
+      onSubmit: async (data) => {
+        await updateCategory([category.id, data])
+        modal.hideModal()
+      },
     })
   }
 
