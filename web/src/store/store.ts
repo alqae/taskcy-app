@@ -10,6 +10,7 @@ import sharedSlice from './reducers/sharedSlice'
 
 import { categoryApi } from './apis/categoryApi'
 import { exampleApi } from './apis/exampleApi'
+import { profileApi } from './apis/profileApi'
 import { authApi } from './apis/authApi'
 import { taskApi } from './apis/taskApi'
 import { tagApi } from './apis/tagApi'
@@ -24,6 +25,7 @@ export const store = configureStore({
     [taskApi.reducerPath]: taskApi.reducer,
     [categoryApi.reducerPath]: categoryApi.reducer,
     [tagApi.reducerPath]: tagApi.reducer,
+    [profileApi.reducerPath]: profileApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false })
@@ -33,6 +35,7 @@ export const store = configureStore({
         taskApi.middleware,
         categoryApi.middleware,
         tagApi.middleware,
+        profileApi.middleware,
         // thunk,
         ...(import.meta.env.DEV ? [logger] : [])
       ),
@@ -44,7 +47,7 @@ setupListeners(store.dispatch)
 const token = localStorage.getItem("token")
 if (token) {
   store.dispatch(setAccessToken(token))
-  store.dispatch(authApi.endpoints.getMe.initiate(undefined, { forceRefetch: true }))
+  store.dispatch(profileApi.endpoints.getProfile.initiate(undefined, { forceRefetch: true }))
 }
 
 export type RootState = ReturnType<typeof store.getState>

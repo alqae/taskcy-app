@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack'
 import * as yup from 'yup'
 import React from 'react'
 
+import { useUpdateBasicInformationMutation } from '@store/apis/profileApi'
 import { getUserLogged } from '@store/reducers/authSlice'
 import { useAppSelector } from '@store/store'
 
@@ -21,6 +22,8 @@ const schema = yup.object().shape({
 })
 
 export const UpdateBasicInformation: React.FC = () => {
+  const [updateBasicInformation, { isLoading }] = useUpdateBasicInformationMutation()
+
   const userLogged = useAppSelector(getUserLogged)
 
   const form = useForm({
@@ -32,13 +35,9 @@ export const UpdateBasicInformation: React.FC = () => {
     },
   })
 
-  const handleSubmit = (data: yup.InferType<typeof schema>) => {
-    console.log(data)
-  }
-
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
+      <form onSubmit={form.handleSubmit(updateBasicInformation)}>
         <Stack spacing={2}>
           <Typography variant="h6">Basic Information</Typography>
           <Typography variant="body2">
@@ -52,6 +51,7 @@ export const UpdateBasicInformation: React.FC = () => {
             autoComplete="given-name"
             autoFocus
             placeholder="John"
+            disabled={isLoading}
             error={Boolean(form.formState.errors.firstName)}
             helperText={form.formState.errors.firstName?.message}
             color={form.formState.errors.firstName ? 'error' : 'primary'}
@@ -63,6 +63,7 @@ export const UpdateBasicInformation: React.FC = () => {
             type="text"
             autoComplete="family-name"
             placeholder="Doe"
+            disabled={isLoading}
             error={Boolean(form.formState.errors.lastName)}
             helperText={form.formState.errors.lastName?.message}
             color={form.formState.errors.lastName ? 'error' : 'primary'}
@@ -74,6 +75,7 @@ export const UpdateBasicInformation: React.FC = () => {
             type="email"
             autoComplete="email"
             placeholder="your@email.com"
+            disabled={isLoading}
             error={Boolean(form.formState.errors.email)}
             helperText={form.formState.errors.email?.message}
             color={form.formState.errors.email ? 'error' : 'primary'}
@@ -85,7 +87,7 @@ export const UpdateBasicInformation: React.FC = () => {
               size="medium"
               type="submit"
               variant="contained"
-              disabled={!form.formState.isValid || !form.formState.isDirty}
+              disabled={!form.formState.isValid || !form.formState.isDirty || isLoading}
             >
               Save
             </Button>

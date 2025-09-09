@@ -59,3 +59,15 @@ export interface PaginatedRequest {
   sort_by: string
   sort_order: 'asc' | 'desc'
 }
+
+export interface UpdateProfileRequest {
+  firstName: string
+  lastName: string
+  email: string
+}
+
+export interface UpdatePasswordRequest {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}

@@ -105,16 +105,6 @@ export const authApi = createApi({
         dispatch(clearAuth())
       },
     }),
-    getMe: builder.query<ApiResponse<User>, void>({
-      query: () => ({
-        url: '/auth/profile',
-        method: 'GET',
-      }),
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled
-        dispatch(setUser(data?.data))
-      },
-    }),
   }),
 })
 

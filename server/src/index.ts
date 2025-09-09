@@ -15,6 +15,7 @@ import { AppDataSource } from "./data-source"
 import logger from "./utils/logger"
 
 import categoryRoutes from "./routes/category.routes"
+import profileRoutes from "./routes/profile.routes"
 import authRoutes from "./routes/auth.routes"
 import taskRoutes from "./routes/task.routes"
 import tagRoutes from "./routes/tag.routes"
@@ -65,6 +66,7 @@ import { z } from "zod"
   app.use("/tasks", authMiddleware, taskRoutes)
   app.use("/categories", authMiddleware, categoryRoutes)
   app.use("/tags", authMiddleware, tagRoutes)
+  app.use("/profile", authMiddleware, profileRoutes)
 
   app.get("/", (_, res) => res.send("All works!"))
 

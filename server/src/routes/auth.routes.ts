@@ -79,24 +79,6 @@ router.post("/logout", authMiddleware, AuthController.logout)
 
 /**
  * @swagger
- * /auth/profile:
- *   get:
- *     tags: [Auth]
- *     security:
- *       - BearerAuth: []
- *     summary: Get user profile
- *     responses:
- *       200:
- *         description: User profile
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- */
-router.get("/profile", authMiddleware, AuthController.getProfile)
-
-/**
- * @swagger
  * /auth/refresh-token:
  *   post:
  *     tags: [Auth]

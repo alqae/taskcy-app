@@ -79,18 +79,6 @@ export const logout = async (req: IRequest, res: Response) => {
   return successResponse(res, "Logout successful")
 }
 
-export const getProfile = async (req: IRequest, res: Response) => {
-  const user = await AppDataSource.getRepository(User).findOne({
-    where: { id: req.user.id },
-  })
-
-  if (!user) {
-    return errorResponse(res, "User not found", 404)
-  }
-
-  return successResponse(res, "User profile", user)
-}
-
 export const refreshToken = async (req: IRequest, res: Response) => {
   const token = req.cookies.jid
 
