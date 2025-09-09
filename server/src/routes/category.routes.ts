@@ -1,6 +1,8 @@
 import { Router } from "express"
 
 import * as CategoryController from "../controllers/category.controller"
+import { CreateCategorySchema, UpdateCategorySchema } from "../schemas"
+import { validate } from "../utils/validate"
 
 const router = Router()
 
@@ -75,7 +77,7 @@ router.get("/options", CategoryController.getOptions)
  *       409:
  *         description: Category already exists
  */
-router.post("/", CategoryController.create)
+router.post("/", validate(CreateCategorySchema), CategoryController.create)
 
 /**
  * @swagger
@@ -107,7 +109,7 @@ router.post("/", CategoryController.create)
  *       404:
  *         description: Category not found
  */
-router.put("/:id", CategoryController.update)
+router.put("/:id", validate(UpdateCategorySchema), CategoryController.update)
 
 /**
  * @swagger
