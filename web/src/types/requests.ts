@@ -13,6 +13,23 @@ export interface SignUpRequest {
   password: string
 }
 
+export interface GetTaskRequest extends PaginatedRequest {
+  tags_ids: string[]
+  states: TaskState[]
+  priorities: string[]
+  category_id: string[]
+  expiry_date?: string
+  search?: string
+}
+
+export interface GetTagRequest extends PaginatedRequest {
+  search?: string
+}
+
+export interface GetCategoryRequest extends PaginatedRequest {
+  search?: string
+}
+
 export interface CreateTaskRequest {
   id?: number
   name: string
@@ -36,7 +53,7 @@ export interface CreateCategoryRequest {
   color: string
 }
 
-export interface PaginatedRequest extends Record<string, string | number> {
+export interface PaginatedRequest {
   take: number
   skip: number
   sort_by: string

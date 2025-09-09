@@ -1,4 +1,3 @@
-import { enqueueSnackbar } from 'notistack'
 import { Helmet } from 'react-helmet-async'
 import React from 'react'
 
@@ -17,18 +16,7 @@ const ArchivePage: React.FC = () => {
         <meta name="description" content="This is the archive page of Taskcy." />
       </Helmet>
 
-      <TaskTable
-        allowedStates={[TaskState.ARCHIVED]}
-        title="Archive"
-        onActionClick={async (selectedIds, refetch) => {
-          try {
-            await deleteManyTasks(selectedIds)
-            enqueueSnackbar('Tasks archived successfully', { variant: 'success' })
-          } finally {
-            refetch()
-          }
-        }}
-      />
+      <TaskTable allowedStates={[TaskState.ARCHIVED]} onActionClick={deleteManyTasks} title="Archive" />
     </ErrorBoundary>
   )
 }

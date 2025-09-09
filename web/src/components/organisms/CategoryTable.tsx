@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import DownloadIcon from '@mui/icons-material/Download'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
@@ -11,12 +11,12 @@ import Chip from '@mui/material/Chip'
 
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
 import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
-import type { Category, PaginatedResponse } from '@types'
+import { useGetCategoriesQuery } from '@store/apis/categoryApi'
 import { useModal } from '@/context/ModalContext'
 import { useDebounce } from '@/hooks/useDebounce'
 import { CategoryModal } from './CategoryModal'
-import { useApi } from '@/hooks/useApi'
-import { textOn } from '@/utils'
+import { handleError, textOn } from '@/utils'
+import type { Category } from '@types'
 
 export const CategoryTable: React.FC = () => {
   const [order, setOrder] = useState<Order>('asc')
@@ -27,21 +27,6 @@ export const CategoryTable: React.FC = () => {
 
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 800)
-
-  const query = useMemo(() => {
-    const filters: Record<string, string> = {
-      take: rowsPerPage.toString(),
-      skip: page.toString(),
-      sort_by: orderBy,
-      sort_order: order,
-    }
-
-    if (debouncedSearch) {
-      filters.search = debouncedSearch
-    }
-
-    return filters
-  }, [page, rowsPerPage, orderBy, order, debouncedSearch])
 
   const headCells: readonly HeadCell<Category>[] = [
     {
@@ -64,20 +49,15 @@ export const CategoryTable: React.FC = () => {
     },
   ]
 
-  const { data = {
-    hits: [],
-    total: 0,
-    totalPages: 0,
-  }, isLoading, error, refetch } = useApi<PaginatedResponse<Category>>("/categories", {
-    method: "GET",
-    query,
-    skip: true,
+  const categoriesResponse = useGetCategoriesQuery({
+    take: rowsPerPage,
+    skip: page,
+    sort_by: orderBy,
+    sort_order: order,
+    search: debouncedSearch,
+  }, {
+    refetchOnMountOrArgChange: true
   })
-
-  useEffect(() => {
-    refetch()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, debouncedSearch])
 
   const modal = useModal()
 
@@ -93,10 +73,10 @@ export const CategoryTable: React.FC = () => {
     <>
       <EnhancedTable
         dense
-        isLoading={isLoading}
+        isLoading={categoriesResponse.isLoading}
         headCells={headCells}
-        rows={data.hits}
-        error={error}
+        rows={categoriesResponse.data?.hits ?? []}
+        error={handleError(categoriesResponse.error)}
         title="Categories"
         filters={(
           <Stack direction="row" spacing={1}>
@@ -148,14 +128,12 @@ export const CategoryTable: React.FC = () => {
         onPaginationChange={(page, rowsPerPage) => {
           setRowsPerPage(rowsPerPage)
           setPage(page)
-          refetch()
         }}
         onSortChange={(orderBy, order) => {
           setOrderBy(orderBy)
           setOrder(order)
-          refetch()
         }}
-        onRefresh={refetch}
+        onRefresh={categoriesResponse.refetch}
         onActionClick={() => { }}
         selectedIds={selectedIds}
         onSelectedIdsChange={setSelectedIds}

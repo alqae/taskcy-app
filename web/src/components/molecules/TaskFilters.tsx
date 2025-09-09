@@ -47,7 +47,7 @@ export const TaskFilters: React.FC<TaskFiltersProps> = (props) => {
 
   const isMobile = useMediaQuery(theme => theme.breakpoints.down('md'));
   const Component: React.ElementType = isMobile ? MobileTaskFilters : DesktopTaskFilters
-  return <Component {...props} categories={categoriesResponse.data} tags={tagsResponse.data} />
+  return <Component {...props} categories={categoriesResponse.data?.data ?? []} tags={tagsResponse.data?.data ?? []} />
 }
 
 interface FilterPropsWithResponses extends TaskFiltersProps {

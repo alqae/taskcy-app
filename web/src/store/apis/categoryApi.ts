@@ -5,8 +5,8 @@ import type {
   ApiResponse,
   Category,
   CreateCategoryRequest,
+  GetCategoryRequest,
   Option,
-  PaginatedRequest,
   PaginatedResponse
 } from '@types'
 
@@ -22,7 +22,7 @@ export const categoryApi = createApi({
       }),
       providesTags: (_, error) => error ? [] : ['Categories'],
     }),
-    getCategories: builder.query<PaginatedResponse<Category>, PaginatedRequest>({
+    getCategories: builder.query<PaginatedResponse<Category>, GetCategoryRequest>({
       query: (params) => ({
         url: '/categories',
         method: 'GET',

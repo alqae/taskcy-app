@@ -5,7 +5,7 @@ import type {
   ApiResponse,
   CreateTagRequest,
   Option,
-  PaginatedRequest,
+  GetTagRequest,
   PaginatedResponse,
   Tag
 } from '@types'
@@ -22,7 +22,7 @@ export const tagApi = createApi({
       }),
       providesTags: (_, error) => error ? [] : ['Tags'],
     }),
-    getTags: builder.query<PaginatedResponse<Tag>, PaginatedRequest>({
+    getTags: builder.query<PaginatedResponse<Tag>, GetTagRequest>({
       query: (params) => ({
         url: '/tags',
         method: 'GET',

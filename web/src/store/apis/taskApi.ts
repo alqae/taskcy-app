@@ -1,10 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
+import { enqueueSnackbar } from 'notistack'
 
 import { baseQuery } from './apiConfig'
 import type {
   ApiResponse,
   CreateTaskRequest,
-  PaginatedRequest,
+  GetTaskRequest,
   PaginatedResponse,
   Task
 } from '@types'
@@ -14,7 +15,7 @@ export const taskApi = createApi({
   baseQuery,
   tagTypes: ['Tasks'],
   endpoints: (builder) => ({
-    getTasksOptions: builder.query<PaginatedResponse<Task>, PaginatedRequest>({
+    getTasks: builder.query<PaginatedResponse<Task>, GetTaskRequest>({
       query: (params) => ({
         url: '/tasks',
         method: 'GET',
@@ -44,7 +45,11 @@ export const taskApi = createApi({
         method: 'PATCH',
         body: { taskIds: body }
       }),
-      invalidatesTags: ['Tasks']
+      invalidatesTags: ['Tasks'],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+        enqueueSnackbar('Tasks archived successfully', { variant: 'success' })
+      }
     }),
     deleteManyTasks: builder.mutation<void, Task['id'][]>({
       query: (body) => ({
@@ -52,13 +57,17 @@ export const taskApi = createApi({
         method: 'DELETE',
         body: { taskIds: body }
       }),
-      invalidatesTags: ['Tasks']
+      invalidatesTags: ['Tasks'],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled
+        enqueueSnackbar('Tasks deleted successfully', { variant: 'success' })
+      }
     })
   }),
 })
 
 export const {
-  useGetTasksOptionsQuery,
+  useGetTasksQuery,
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useArchiveManyTasksMutation,

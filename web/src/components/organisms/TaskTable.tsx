@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState } from 'react'
 import DownloadIcon from '@mui/icons-material/Download'
 import ArchiveIcon from '@mui/icons-material/Archive'
 import IconButton from '@mui/material/IconButton'
@@ -15,12 +15,12 @@ import type { Moment } from 'moment'
 import Fab from '@mui/material/Fab'
 
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
-import { type PaginatedResponse, type Task, TaskPriority, TaskState } from '@types'
 import { TaskFilters } from '@/components/molecules/TaskFilters'
+import { type Task, TaskPriority, TaskState } from '@types'
 import { TaskModal } from '@/components/organisms/TaskModal'
+import { useGetTasksQuery } from '@store/apis/taskApi'
 import { useDebounce } from '@/hooks/useDebounce'
-import { useApi } from '@/hooks/useApi'
-import { textOn } from '@/utils'
+import { textOn, handleError } from '@/utils'
 
 const getColorByState = (state: TaskState) => {
   switch (state) {
@@ -48,7 +48,7 @@ interface TaskTableProps {
   allowedStates?: TaskState[]
   title?: string
   showAddModal?: boolean
-  onActionClick: (selectedIds: number[], refetch: () => Promise<void>) => void
+  onActionClick: (selectedIds: Task['id'][]) => void
 }
 
 export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title = 'Tasks', showAddModal = false, onActionClick }) => {
@@ -113,55 +113,21 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
     },
   ]
 
-  const query = useMemo(() => {
-    const filters: Record<string, string> = {
-      take: rowsPerPage.toString(),
-      skip: page.toString(),
-      sort_by: orderBy,
-      sort_order: order,
-    }
 
-    if (expiryDate) {
-      filters.expiry_date = expiryDate.format('YYYY-MM-DD')
-    }
-
-    if (selectedPriorities.length > 0) {
-      filters.priorities = selectedPriorities.join(',')
-    }
-
-    if (selectedStates.length > 0) {
-      filters.states = selectedStates.join(',')
-    }
-
-    if (selectedCategories.length > 0) {
-      filters.category_id = selectedCategories.join(',')
-    }
-
-    if (selectedTags.length > 0) {
-      filters.tags_ids = selectedTags.join(',')
-    }
-
-    if (debouncedSearch) {
-      filters.search = debouncedSearch
-    }
-
-    return filters
-  }, [expiryDate, selectedPriorities, selectedStates, selectedCategories, selectedTags, page, rowsPerPage, orderBy, order, debouncedSearch])
-
-  const { data = {
-    hits: [],
-    total: 0,
-    totalPages: 0,
-  }, isLoading, error, refetch } = useApi<PaginatedResponse<Task>>("/tasks", {
-    method: "GET",
-    query,
-    skip: true,
+  const taskResponse = useGetTasksQuery({
+    take: rowsPerPage,
+    skip: page,
+    sort_by: orderBy,
+    sort_order: order,
+    search: debouncedSearch,
+    tags_ids: selectedTags,
+    states: selectedStates,
+    priorities: selectedPriorities,
+    category_id: selectedCategories,
+    expiry_date: expiryDate?.format('YYYY-MM-DD'),
+  }, {
+    refetchOnMountOrArgChange: true
   })
-
-  useEffect(() => {
-    refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, debouncedSearch])
 
   return (
     <>
@@ -169,10 +135,10 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
         dense
         selectedIds={selectedIds}
         onSelectedIdsChange={setSelectedIds}
-        isLoading={isLoading}
+        isLoading={taskResponse.isLoading}
         headCells={headCells}
-        rows={data.hits}
-        error={error}
+        rows={taskResponse.data?.hits ?? []}
+        error={handleError(taskResponse.error)}
         title={title}
         filters={(
           <Stack direction="row" spacing={1}>
@@ -224,7 +190,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
               </TableCell>
 
               <TaskModal
-                onSubmit={refetch}
+                onSubmit={taskResponse.refetch}
                 task={row}
                 renderLauncher={(toggle) => (
                   <>
@@ -265,24 +231,22 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
         onPaginationChange={(page, rowsPerPage) => {
           setRowsPerPage(rowsPerPage)
           setPage(page)
-          refetch()
         }}
         onSortChange={(orderBy, order) => {
           setOrderBy(orderBy)
           setOrder(order)
-          refetch()
         }}
-        onRefresh={refetch}
+        onRefresh={taskResponse.refetch}
         actionIcon={ArchiveIcon}
         onActionClick={(selectedIds) => {
-          onActionClick(selectedIds, refetch)
+          onActionClick(selectedIds)
           setSelectedIds([])
         }}
       />
 
       {showAddModal && (
         <TaskModal
-          onSubmit={refetch}
+          onSubmit={taskResponse.refetch}
           renderLauncher={(toggle) => (
             <Fab
               color="primary"

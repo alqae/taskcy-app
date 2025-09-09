@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet-async'
-import { enqueueSnackbar } from 'notistack'
 import React from 'react'
 
 import { useArchiveManyTasksMutation } from '@store/apis/taskApi'
@@ -16,17 +15,7 @@ const TasksPage: React.FC = () => {
         <meta name="description" content="This is the tasks page of Taskcy." />
       </Helmet>
 
-      <TaskTable
-        showAddModal
-        onActionClick={async (selectedIds, refetch) => {
-          try {
-            await archiveTasks(selectedIds)
-            enqueueSnackbar('Tasks archived successfully', { variant: 'success' })
-          } finally {
-            refetch()
-          }
-        }}
-      />
+      <TaskTable onActionClick={archiveTasks} showAddModal />
     </ErrorBoundary>
   )
 }

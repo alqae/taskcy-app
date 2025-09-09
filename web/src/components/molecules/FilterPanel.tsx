@@ -124,7 +124,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
           <Divider />
 
-          <List disablePadding>
+          <List disablePadding sx={{ maxHeight: '200px', overflowY: 'auto' }}>
             {columns.map(({ label, value }) => (
               <ListItem key={`${title}-${value}`} disablePadding dense>
                 <ListItemButton>

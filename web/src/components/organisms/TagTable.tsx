@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import DownloadIcon from '@mui/icons-material/Download'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
@@ -11,12 +11,12 @@ import Chip from '@mui/material/Chip'
 
 import { EnhancedTable, type HeadCell, type Order } from '@/components/molecules/Table'
 import { ExpandableSearchBar } from '@/components/atoms/ExpandableSearchBar'
-import type { Tag, PaginatedResponse } from '@types'
+import { useGetTagsQuery } from '@store/apis/tagApi'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useModal } from '@/context/ModalContext'
-import { useApi } from '@/hooks/useApi'
+import { handleError, textOn } from '@/utils'
 import { TagModal } from './TagModal'
-import { textOn } from '@/utils'
+import type { Tag } from '@types'
 
 export const TagTable: React.FC = () => {
   const [order, setOrder] = useState<Order>('asc')
@@ -27,21 +27,6 @@ export const TagTable: React.FC = () => {
 
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 800)
-
-  const query = useMemo(() => {
-    const filters: Record<string, string> = {
-      take: rowsPerPage.toString(),
-      skip: page.toString(),
-      sort_by: orderBy,
-      sort_order: order,
-    }
-
-    if (debouncedSearch) {
-      filters.search = debouncedSearch
-    }
-
-    return filters
-  }, [page, rowsPerPage, orderBy, order, debouncedSearch])
 
   const headCells: readonly HeadCell<Tag>[] = [
     {
@@ -64,20 +49,15 @@ export const TagTable: React.FC = () => {
     },
   ]
 
-  const { data = {
-    hits: [],
-    total: 0,
-    totalPages: 0,
-  }, isLoading, error, refetch } = useApi<PaginatedResponse<Tag>>("/tags", {
-    method: "GET",
-    query,
-    skip: true,
+  const tagsResponse = useGetTagsQuery({
+    take: rowsPerPage,
+    skip: page,
+    sort_by: orderBy,
+    sort_order: order,
+    search: debouncedSearch,
+  }, {
+    refetchOnMountOrArgChange: true
   })
-
-  useEffect(() => {
-    refetch()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, debouncedSearch])
 
   const modal = useModal()
 
@@ -93,10 +73,10 @@ export const TagTable: React.FC = () => {
     <>
       <EnhancedTable
         dense
-        isLoading={isLoading}
+        isLoading={tagsResponse.isLoading}
         headCells={headCells}
-        rows={data.hits}
-        error={error}
+        rows={tagsResponse.data?.hits ?? []}
+        error={handleError(tagsResponse.error)}
         title="Tags"
         filters={(
           <Stack direction="row" spacing={1}>
@@ -148,17 +128,15 @@ export const TagTable: React.FC = () => {
         onPaginationChange={(page, rowsPerPage) => {
           setRowsPerPage(rowsPerPage)
           setPage(page)
-          refetch()
         }}
         onSortChange={(orderBy, order) => {
           setOrderBy(orderBy)
           setOrder(order)
-          refetch()
         }}
         onActionClick={() => { }}
         selectedIds={selectedIds}
         onSelectedIdsChange={setSelectedIds}
-        onRefresh={refetch}
+        onRefresh={tagsResponse.refetch}
       />
     </>
   )
