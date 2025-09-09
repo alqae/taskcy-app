@@ -55,7 +55,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
   const [order, setOrder] = React.useState<Order>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof Task>('expiryDate')
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
   const [search, setSearch] = useState('')
 
@@ -137,6 +137,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ allowedStates = [], title 
         onSelectedIdsChange={setSelectedIds}
         isLoading={taskResponse.isLoading}
         headCells={headCells}
+        totalItems={taskResponse.data?.total ?? 0}
         rows={taskResponse.data?.hits ?? []}
         error={handleError(taskResponse.error)}
         title={title}

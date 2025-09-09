@@ -76,6 +76,7 @@ export const TagTable: React.FC = () => {
         isLoading={tagsResponse.isLoading}
         headCells={headCells}
         rows={tagsResponse.data?.hits ?? []}
+        totalItems={tagsResponse.data?.total ?? 0}
         error={handleError(tagsResponse.error)}
         title="Tags"
         filters={(

@@ -76,6 +76,7 @@ export const CategoryTable: React.FC = () => {
         isLoading={categoriesResponse.isLoading}
         headCells={headCells}
         rows={categoriesResponse.data?.hits ?? []}
+        totalItems={categoriesResponse.data?.total ?? 0}
         error={handleError(categoriesResponse.error)}
         title="Categories"
         filters={(

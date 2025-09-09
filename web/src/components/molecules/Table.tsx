@@ -41,7 +41,15 @@ export interface EnhancedTableHeadProps<T> {
   headCells: readonly HeadCell<T>[]
 }
 
-export const EnhancedTableHead = <T,>({ onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells }: EnhancedTableHeadProps<T>) => {
+export const EnhancedTableHead = <T,>({
+  onSelectAllClick,
+  order,
+  orderBy,
+  numSelected,
+  rowCount,
+  onRequestSort,
+  headCells
+}: EnhancedTableHeadProps<T>) => {
   const createSortHandler = (property: keyof T) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property)
   }
@@ -166,6 +174,7 @@ export interface EnhancedTableProps<T> {
   // EnhancedTable props
   selectedIds: number[]
   onSelectedIdsChange: (selectedIds: number[]) => void
+  totalItems: number
 }
 
 export const EnhancedTable = <T extends { id: number }>({
@@ -188,6 +197,7 @@ export const EnhancedTable = <T extends { id: number }>({
   // EnhancedTable props
   selectedIds,
   onSelectedIdsChange,
+  totalItems
 }: EnhancedTableProps<T>) => {
   const handleRequestSort = (_: React.MouseEvent<unknown>, property: keyof T) => {
     const isAsc = sort.orderBy === property && sort.order === 'asc'
@@ -315,7 +325,7 @@ export const EnhancedTable = <T extends { id: number }>({
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={totalItems}
           rowsPerPage={pagination.rowsPerPage}
           page={pagination.page}
           onPageChange={handleChangePage}

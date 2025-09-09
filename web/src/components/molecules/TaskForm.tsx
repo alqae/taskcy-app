@@ -154,6 +154,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
               <MenuItem value={TaskState.TODO}>Todo</MenuItem>
               <MenuItem value={TaskState.IN_PROGRESS}>In Progress</MenuItem>
               <MenuItem value={TaskState.COMPLETED}>Completed</MenuItem>
+              <MenuItem value={TaskState.ARCHIVED}>Archived</MenuItem>
             </Select>
           </FormControl>
         </Grid>
