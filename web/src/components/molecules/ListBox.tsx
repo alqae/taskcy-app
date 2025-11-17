@@ -134,13 +134,14 @@ interface ListBoxProps {
   label: string
   isLoading?: boolean
   error?: string
+  disabled?: boolean
 }
 
-export const ListBox: React.FC<ListBoxProps> = ({ options, value, onChange, label, isLoading, error }) => (
+export const ListBox: React.FC<ListBoxProps> = ({ options, value, onChange, label, isLoading, error, disabled }) => (
   <Autocomplete
     fullWidth
     disableListWrap
-    disabled={isLoading}
+    disabled={disabled || isLoading}
     loading={isLoading}
     loadingText="Loading..."
     isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -187,15 +188,16 @@ interface MultiListBoxProps {
   label: string
   isLoading?: boolean
   error?: string
+  disabled?: boolean
 }
 
-export const MultiListBox: React.FC<MultiListBoxProps> = ({ options, value, onChange, label, isLoading, error }) => (
+export const MultiListBox: React.FC<MultiListBoxProps> = ({ options, value, onChange, label, isLoading, error, disabled }) => (
   <Autocomplete
     fullWidth
     multiple
     disableListWrap
     disableCloseOnSelect
-    disabled={isLoading}
+    disabled={disabled || isLoading}
     loading={isLoading}
     loadingText="Loading..."
     options={isLoading ? [] : options}

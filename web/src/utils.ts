@@ -75,3 +75,32 @@ export const handleError = (error?: FetchBaseQueryError | SerializedError | Erro
 
   return ''
 }
+
+export const formatCurrency = (
+  value: number | string,
+  currency = 'COP',
+  locale = 'es-CO',
+  minDigits = 0,
+  maxDigits = 2,
+): string => {
+  const amount = typeof value === 'string' ? Number(value) : value
+  if (Number.isNaN(amount)) return ''
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: minDigits,
+    maximumFractionDigits: maxDigits,
+  }).format(amount)
+}
+
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
+}

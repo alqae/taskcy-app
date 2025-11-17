@@ -217,6 +217,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
             isLoading={categoriesResponse.isLoading || isLoading}
             options={categoriesResponse.data?.data || []}
             error={form.formState.errors.categoryId?.message}
+            disabled={categoriesResponse.data?.data.length === 0}
           />
         </Grid>
 
@@ -235,6 +236,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({ defaultValue, isLoading, onC
             isLoading={tagsResponse.isLoading || isLoading}
             options={tagsResponse.data?.data || []}
             error={form.formState.errors.tagIds?.message}
+            disabled={tagsResponse.data?.data.length === 0}
           />
         </Grid>
 
